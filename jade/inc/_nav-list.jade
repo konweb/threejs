@@ -1,0 +1,15 @@
+mixin list(val)
+	- var lists = [];
+	- lists.push({link: "index", text: "HOME"});
+	- lists.push({link: "cube/cube01", text: "cube01"});
+
+	ul
+		- for (var i = 0; i < lists.length; i++)
+			if val === 0
+				li: a(href="./#{lists[i].link}.html") #{lists[i].text}
+			else if val === 1
+				li: a(href="../#{lists[i].link}.html") #{lists[i].text}
+			else if val === 2
+				li: a(href="../../#{lists[i].link}.html") #{lists[i].text}
+			else
+				li: a(href="../../../#{lists[i].link}.html") #{lists[i].text}

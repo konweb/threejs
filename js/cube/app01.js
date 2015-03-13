@@ -1,10 +1,9 @@
-(function() {
-	var requestAnimationFrame = window.requestAnimationFrame ||
-															window.mozRequestAnimationFrame ||
-															window.webkitRequestAnimationFrame ||
-															window.msRequestAnimationFrame;
-	window.requestAnimationFrame = requestAnimationFrame;
-})();
+var requestAnimationFrame = window.requestAnimationFrame ||
+														window.mozRequestAnimationFrame ||
+														window.webkitRequestAnimationFrame ||
+														window.msRequestAnimationFrame;
+window.requestAnimationFrame = requestAnimationFrame;
+
 
 window.addEventListener("DOMContentLoaded", function(){
 	/* カメラを用意
