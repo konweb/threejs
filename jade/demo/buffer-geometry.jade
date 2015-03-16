@@ -1,0 +1,13 @@
+include ./../inc/_nav-list.jade
+extends ../inc/_head.jade
+
+block title
+	title Threejs buffer-geometry Sample
+
+block content
+	h1 buffer-geometry サンプル
+
+	mixin list(1)
+
+	script(src="../common/threejs/build/three.min.js")
+	script(src="./js/app01.js")
