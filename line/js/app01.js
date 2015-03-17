@@ -28,8 +28,7 @@ window.addEventListener("DOMContentLoaded", function(){
 
 	geometry.vertices.push(
 		new THREE.Vector3(-100,0,0),
-		new THREE.Vector3(0,100,0),
-		new THREE.Vector3(100,0,0)
+		new THREE.Vector3(0,0,0)
 	);
 
 	var line = new THREE.Line(geometry, material);

@@ -1,0 +1,13 @@
+include ./../inc/_nav-list.jade
+extends ../inc/_head.jade
+
+block title
+	title Threejs line02 Sample
+
+block content
+	h1 複数ラインの描画
+
+	mixin list(1)
+
+	script(src="../common/threejs/build/three.min.js")
+	script(src="./js/app02.js")
