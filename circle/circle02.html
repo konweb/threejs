@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en"></html>
+<head>
+  <meta charset="UTF-8">
+  <title>Threejs circle01 Sample</title>
+</head>
+<body>
+  <h1>複数円(2D)の描画</h1>
+  <ul>
+    <li><a href="../index.html">HOME</a></li>
+    <li><a href="../cube/cube01.html">cube01</a></li>
+    <li><a href="../cube/cube02.html">cube02</a></li>
+    <li><a href="../line/line01.html">line01</a></li>
+    <li><a href="../line/line02.html">line02</a></li>
+    <li><a href="../line/line03.html">line03</a></li>
+    <li><a href="../circle/circle01.html">circle01</a></li>
+    <li><a href="../circle/circle02.html">circle02</a></li>
+    <li><a href="../demo/buffer-geometry.html">DEMO: buffer-geometry</a></li>
+  </ul>
+  <script src="../common/threejs/build/three.min.js"></script>
+  <script src="../common/lib/ParticleCanvasMaterial.js"></script>
+  <script>
+    var requestAnimationFrame = window.requestAnimationFrame ||
+    														window.mozRequestAnimationFrame ||
+    														window.webkitRequestAnimationFrame ||
+    														window.msRequestAnimationFrame;
+    window.requestAnimationFrame = requestAnimationFrame;
+    
+    
+    
+    window.addEventListener("DOMContentLoaded", function(){
+    	var camera,scene,group,particle,renderer;
+    
+    	init();
+    	animate();
+    
+    	function init(){
+    		/*
+    		 * カメラの準備
+    		 * THREE.PerspectiveCamra(画角, 画面比, クリッピング手前, クリッピング奥);
+    		*/
+    		var width = window.innerWidth,
+    				height = window.innerHeight,
+    				fov = 80,
+    				aspect = width / height,
+    				near = 1,
+    				far = 1000,
+    
+    		camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+    		camera.position.z = 500;
+    
+    		/*
+    		 * シーンの作成
+    		*/
+    		scene = new THREE.Scene();
+    
+    		var PI2 = Math.PI * 2;
+    		var program = function ( context ) {
+    			context.beginPath();
+    			context.arc( 0, 0, 10.0, 0, PI2, true );
+    			context.fill();
+    		}
+    
+    		group = new THREE.Group();
+    		scene.add( group );
+    
+    		/*
+    		 * マテリアルの作成
+    		*/
+    		for ( var i = 0; i < 9; i++ ) {
+    			var material = new THREE.ParticleCanvasMaterial( {
+    				color: Math.random() * 0x808008 + 0x808080,
+    				program: program
+    			} );
+    
+    			particle = new THREE.Sprite( material );
+    			//- particle.position.x = Math.random() * 2000 - 1000;
+    			//- particle.position.y = Math.random() * 2000 - 1000;
+    			//- particle.position.z = Math.random() * 2000 - 1000;
+    			//- particle.scale.x = particle.scale.y = Math.random() * 20 + 10;
+    			if(i === 0){
+    				particle.position.x = 0;
+    			}else if(i % 2 == 0){
+    				particle.position.x = -30 * i;
+    			}else{
+    				particle.position.x = 30 * i;
+    			}
+    			console.log(particle.position.x);
+    			//- particle.position.y = 10 * i;
+    			particle.position.z = 0;
+    			group.add( particle );
+    		}
+    
+    		/*
+    		 * レンダラーの作成
+    		*/
+    		renderer = new THREE.CanvasRenderer();
+    		//- renderer.setPixelRatio( window.devicePixelRatio );
+    		renderer.setSize( window.innerWidth, window.innerHeight );
+    		document.body.appendChild(renderer.domElement);
+    		renderer.render(scene, camera);
+    	}
+    
+    	function animate(){
+    		requestAnimationFrame(animate);
+    		render();
+    	}
+    
+    	function render(){
+    	//- 	particle.position.x++;
+    		renderer.render(scene, camera);
+    	}
+    });
+  </script>
+</body>
