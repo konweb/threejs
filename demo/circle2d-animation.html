@@ -30,23 +30,38 @@
     
     
     window.addEventListener("DOMContentLoaded", function(){
-    	var camera,scene,group,particle,renderer;
+    	var camera,scene,group,particle,renderer,material;
     	var col = 20,
-    			margin = 80,
+    			margin = 100,
     			opacity = 0.5,
-    			flag = "large";
+    			flag = "large",
+    			count = 0,
+    			width = window.innerWidth,
+    			height = window.innerHeight;
     
     	init();
     	animate();
+    
+    	setInterval(function(){
+    		count++;
+    		console.log("setInterval");
+    		console.log(count);
+    		//- scene.remove(group);
+    		//- group.children.length = 0;
+    		//- group.remove(particle);
+    		//- cancelAnimationFrame(animate);
+    		//- createMaterial(count);
+    		//- geometry.dispose();
+    		//- material.dispose();
+    		if(count === 4) count = 0;
+    	},3000);
     
     	function init(){
     		/*
     		 * カメラの準備
     		 * THREE.PerspectiveCamra(画角, 画面比, クリッピング手前, クリッピング奥);
     		*/
-    		var width = window.innerWidth,
-    				height = window.innerHeight,
-    				fov = 80,
+    		var fov = 80,
     				aspect = width / height,
     				near = 1,
     				far = 1000;
@@ -54,39 +69,57 @@
     		camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     		camera.position.z = 500;
     
-    		var program = function ( context ) {
-    			var PI2 = Math.PI * 2,
-    					radius = 10.0,
-    					reduce = 0.7;
-    
-    			context.beginPath();
-    			context.arc( 0, 0, radius, 0, PI2, true );
-    			context.closePath();
-    			context.arc( 10, 10, radius * reduce, 0, PI2, true );
-    			context.closePath();
-    			context.arc( -10, 10, radius * reduce, 0, PI2, true );
-    			context.closePath();
-    			context.fill();
-    		}
-    
     		/*
     		 * シーンの作成
     		*/
-    		group = new THREE.Group();
+    		group = new THREE.Object3D();
     		scene = new THREE.Scene();
     		scene.add(group);
     
+    		createMaterial();
+    
+    		/*
+    		 * レンダラーの作成
+    		*/
+    		renderer = new THREE.CanvasRenderer();
+    		renderer.setPixelRatio(window.devicePixelRatio);
+    		renderer.setSize(window.innerWidth, window.innerHeight);
+    		renderer.setClearColorHex(0xe4bbf9, 0.7);
+    		document.body.appendChild(renderer.domElement);
+    		renderer.render(scene, camera);
+    	}
+    
+    	function program(context){
+    		var PI2 = Math.PI * 2,
+    				radius = 10.0,
+    				reduce = 0.7;
+    
+    		context.beginPath();
+    		context.arc( 0, 0, radius, 0, PI2, true );
+    		context.closePath();
+    		context.arc( 10, 10, radius * reduce, 0, PI2, true );
+    		context.closePath();
+    		context.arc( -10, 10, radius * reduce, 0, PI2, true );
+    		context.closePath();
+    		context.fill();
+    	}
+    
+    	function createMaterial(count){
+    		console.log(width);
     		/*
     		 * マテリアルの作成
     		*/
     		for(var i = 0;i < 300 * col;i++){
-    			var material = new THREE.SpriteCanvasMaterial( {
+    			material = new THREE.SpriteCanvasMaterial( {
     				color: Math.random() * 0x808008 + 0x808080,
     				program: program
     			});
     			particle = new THREE.Sprite(material);
     			particle.position.x = Number("-" + width / 2);
     			particle.position.y = height / 2;
+    			//- particle.position.x = (Math.random() * width) -500;
+    			//- particle.position.y = (Math.random() * width) -500;
+    			//- particle.position.z = Math.random() * 50;
     			group.add(particle);
     		}
     
@@ -101,17 +134,8 @@
     				group.children[i*col+j].material.opacity = opacity;
     			}
     		}
-    		//- console.log(group.children[1].position.x);
-    		scene.add( particle );
-    
-    		/*
-    		 * レンダラーの作成
-    		*/
-    		renderer = new THREE.CanvasRenderer();
-    		renderer.setPixelRatio( window.devicePixelRatio );
-    		renderer.setSize( window.innerWidth, window.innerHeight );
-    		document.body.appendChild(renderer.domElement);
-    		renderer.render(scene, camera);
+    		console.log(group);
+    		scene.add(group);
     	}
     
     	function animate(){
@@ -126,14 +150,28 @@
     	}
     
     	function render(){
-    		var r = 0.02;
+    		var r = 0.3;
     		group.children.map(function(val, i){
-    			if(flag === "large"){
-    				val.scale.x += r;
-    				val.scale.y += r;
+    			//- if(flag === "large"){
+    			//- 	val.scale.x += r;
+    			//- 	val.scale.y += r;
+    			//- }else{
+    			//- 	val.scale.x -= r;
+    			//- 	val.scale.y -= r;
+    			//- }
+    			//- console.log(count);
+    			if(count === 0){
+    				val.position.x += r;
+    				val.position.y += r;
+    			}else if(count === 1){
+    				val.position.x += r;
+    				val.position.y -= r;
+    			}else if(count === 2){
+    				val.position.x -= r;
+    				val.position.y -= r;
     			}else{
-    				val.scale.x -= r;
-    				val.scale.y -= r;
+    				val.position.x -= r;
+    				val.position.y += r;
     			}
     			return val;
     		});
