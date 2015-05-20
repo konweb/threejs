@@ -2,10 +2,10 @@ include ./../inc/_nav-list.jade
 extends ../inc/_head.jade
 
 block title
-	title Threejs cube01 Sample
+	title Threejs Other Objuct Plane Sample
 
 block content
-	h1 円柱の描画
+	h1 平面の描画
 
 	mixin list(1)
 
@@ -18,9 +18,6 @@ block content
 				renderer = ""
 
 				init = ->
-					###
-					 * カメラの設定
-					###
 					width = window.innerWidth
 					height = window.innerHeight
 					fov = 45
@@ -28,8 +25,11 @@ block content
 					near = 1
 					fav = 1000
 
+					###
+					 * カメラの設定
+					###
 					camera = new THREE.PerspectiveCamera fov, aspect, near, fav
-					camera.position.set 50, 50, 150
+					camera.position.set 50, 50, 200
 					camera.up.set 0, 0, 1
 					camera.lookAt {x: 0, y: 0, z: 0}
 
@@ -41,9 +41,9 @@ block content
 
 
 					###
-					 * 軸ヘルパー
+					 * 軸ヘルパーの作成
 					###
-					axis = new THREE.AxisHelper 100
+					axis = new THREE.AxisHelper 150
 					axis.position.set 0, 0, 0
 					scene.add axis
 
@@ -51,14 +51,15 @@ block content
 					###
 					 * メッシュの作成
 					###
-					#ジオメトリーの作成
-					geometry = new THREE.CylinderGeometry 40, 40, 80, 50, 50, true
 
-					#マテリアルの作成
-					material = new THREE.MeshNormalMaterial {shading: THREE.SmoothShading, side: THREE.DoubleSide}
+					# ジオメトリーの作成
+					geometry = new THREE.PlaneGeometry 100, 100, 10, 10
 
-					cylinder = new THREE.Mesh geometry, material
-					scene.add cylinder
+					# マテリアルの作成
+					material = new THREE.MeshNormalMaterial {wireframe: true}
+
+					plane = new THREE.Mesh geometry, material
+					scene.add plane
 
 
 					###
@@ -70,3 +71,5 @@ block content
 					renderer.render scene, camera
 
 				init()
+
+

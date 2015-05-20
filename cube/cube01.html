@@ -17,6 +17,11 @@
     <li><a href="../line/line04.html">line04</a></li>
     <li><a href="../circle/circle01.html">circle01</a></li>
     <li><a href="../circle/circle02.html">circle02</a></li>
+    <li><a href="../uniqe/uniqe01.html">uniqe01</a></li>
+    <li><a href="../uniqe/uniqe02.html">uniqe02</a></li>
+    <li><a href="../uniqe/uniqe03.html">uniqe03</a></li>
+    <li><a href="../other/other01.html">other01</a></li>
+    <li><a href="../other/other02.html">other02</a></li>
     <li><a href="../helper/helper01.html">helper01</a></li>
     <li><a href="../demo/circle2d-animation.html">DEMO: circle2d-animation</a></li>
     <li><a href="../demo/buffer-geometry.html">DEMO: buffer-geometry</a></li>
@@ -30,7 +35,7 @@
     	*/
     	var width  = window.innerWidth,
     			height = window.innerHeight,
-    			fov    = 80,
+    			fov    = 45,
     			aspect = width / height,
     			near   = 1,
     			far    = 1000,
@@ -38,7 +43,10 @@
     
     	// z方向に500ずらす
     	//- camera.position.z = 500;
-    	camera.position.set(50, 50, 500);
+    	camera.position.set(50, 50, 200);
+    	camera.up.set(0, 0, 1);
+    	camera.lookAt({x: 0, y: 0, z: 0});
+    
     
     
     	/* シーンの準備
@@ -62,16 +70,14 @@
     
     	// ジオメトリーの作成
     	// THREE.CubeGeometry(横幅, 高さ, 奥行き, (横の分割数, 縦の分割数, 奥行きの分割数, 表面, sides));
-    	var geometry = new THREE.CubeGeometry(200, 200,200);
+    	var geometry = new THREE.CubeGeometry(50, 50, 50);
     
     	// マテリアルの作成
     	// THREE.MeshLambertMaterial({object});
-    	var material = new THREE.MeshLambertMaterial({color: 0x660000});
+    	var material = new THREE.MeshNormalMaterial({wireframeLinewidth: 3});
     
     	// メッシュの作成
     	var cubeMesh = new THREE.Mesh(geometry, material);
-    	cubeMesh.rotation.x = 10;
-    	cubeMesh.rotation.y = 45;
     
     
     	/* メッシュをシーンに追加

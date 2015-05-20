@@ -2,10 +2,10 @@
 <html lang="en"></html>
 <head>
   <meta charset="UTF-8">
-  <title>Threejs cube01 Sample</title>
+  <title>Threejs Other Objuct Circle Sample</title>
 </head>
 <body>
-  <h1>円柱の描画</h1>
+  <h1>円形オブジェクトの描画</h1>
   <ul>
     <li><a href="../index.html">HOME</a></li>
     <li><a href="../cube/cube01.html">cube01</a></li>
@@ -29,8 +29,8 @@
   <script src="../common/threejs/build/three.min.js"></script>
   <script>(function() {
   window.addEventListener("DOMContentLoaded", function() {
-    var camera, init, renderer, scene;
-    camera = "";
+    var camemra, init, renderer, scene;
+    camemra = "";
     scene = "";
     renderer = "";
     init = function() {
@@ -38,7 +38,7 @@
       /*
       		 * カメラの設定
        */
-      var aspect, axis, cylinder, fav, fov, geometry, height, material, near, width;
+      var aspect, axis, camera, circle, fav, fov, geometry, height, material, near, width;
       width = window.innerWidth;
       height = window.innerHeight;
       fov = 45;
@@ -63,19 +63,17 @@
       		 * 軸ヘルパー
        */
       axis = new THREE.AxisHelper(100);
-      axis.position.set(0, 0, 0);
       scene.add(axis);
 
       /*
       		 * メッシュの作成
        */
-      geometry = new THREE.CylinderGeometry(40, 40, 80, 50, 50, true);
+      geometry = new THREE.CircleGeometry(60, 50, Math.PI / 3, Math.PI * 4 / 3);
       material = new THREE.MeshNormalMaterial({
-        shading: THREE.SmoothShading,
-        side: THREE.DoubleSide
+        wireframe: true
       });
-      cylinder = new THREE.Mesh(geometry, material);
-      scene.add(cylinder);
+      circle = new THREE.Mesh(geometry, material);
+      scene.add(circle);
 
       /*
       		 * レンダラーの作成

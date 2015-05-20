@@ -2,10 +2,10 @@
 <html lang="en"></html>
 <head>
   <meta charset="UTF-8">
-  <title>Threejs cube01 Sample</title>
+  <title>Threejs Uniqe Torus Sample</title>
 </head>
 <body>
-  <h1>円柱の描画</h1>
+  <h1>トーラスオブジェクト</h1>
   <ul>
     <li><a href="../index.html">HOME</a></li>
     <li><a href="../cube/cube01.html">cube01</a></li>
@@ -38,7 +38,7 @@
       /*
       		 * カメラの設定
        */
-      var aspect, axis, cylinder, fav, fov, geometry, height, material, near, width;
+      var aspect, axis, fav, fov, geometry, height, material, near, torusKnot, width;
       width = window.innerWidth;
       height = window.innerHeight;
       fov = 45;
@@ -69,13 +69,12 @@
       /*
       		 * メッシュの作成
        */
-      geometry = new THREE.CylinderGeometry(40, 40, 80, 50, 50, true);
+      geometry = new THREE.TorusKnotGeometry(40, 5, 50, 50, 1, 1, 2);
       material = new THREE.MeshNormalMaterial({
-        shading: THREE.SmoothShading,
-        side: THREE.DoubleSide
+        shading: THREE.SmoothShading
       });
-      cylinder = new THREE.Mesh(geometry, material);
-      scene.add(cylinder);
+      torusKnot = new THREE.Mesh(geometry, material);
+      scene.add(torusKnot);
 
       /*
       		 * レンダラーの作成

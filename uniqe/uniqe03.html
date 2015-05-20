@@ -2,10 +2,10 @@
 <html lang="en"></html>
 <head>
   <meta charset="UTF-8">
-  <title>Threejs cube01 Sample</title>
+  <title>Threejs Uniqe Parametric Sample</title>
 </head>
 <body>
-  <h1>円柱の描画</h1>
+  <h1>2次元平面形状</h1>
   <ul>
     <li><a href="../index.html">HOME</a></li>
     <li><a href="../cube/cube01.html">cube01</a></li>
@@ -38,7 +38,7 @@
       /*
       		 * カメラの設定
        */
-      var aspect, axis, cylinder, fav, fov, geometry, height, material, near, width;
+      var aspect, axis, fav, fov, geometry, height, holePath, i, j, material, n, near, ref, shape, size, theta, width;
       width = window.innerWidth;
       height = window.innerHeight;
       fov = 45;
@@ -46,7 +46,7 @@
       near = 1;
       fav = 1000;
       camera = new THREE.PerspectiveCamera(fov, aspect, near, fav);
-      camera.position.set(50, 50, 150);
+      camera.position.set(50, 50, 100);
       camera.up.set(0, 0, 1);
       camera.lookAt({
         x: 0,
@@ -69,13 +69,21 @@
       /*
       		 * メッシュの作成
        */
-      geometry = new THREE.CylinderGeometry(40, 40, 80, 50, 50, true);
-      material = new THREE.MeshNormalMaterial({
-        shading: THREE.SmoothShading,
-        side: THREE.DoubleSide
-      });
-      cylinder = new THREE.Mesh(geometry, material);
-      scene.add(cylinder);
+      n = 8;
+      size = 50;
+      shape = new THREE.Shape;
+      shape.moveTo(0, size);
+      for (i = j = 0, ref = n; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
+        theta = 2 * Math.PI / n * i;
+        shape.lineTo(size * Math.sin(theta, size * Math.cos(theta)));
+      }
+      holePath = new THREE.Path;
+      holePath.absarc(20, 20, 15, 0, Math.PI * 2, true);
+      shape.holes.push(holePath);
+      geometry = new THREE.ShapeGeometry(shape);
+      material = new THREE.MeshNormalMaterial;
+      shape = new THREE.Mesh(geometry, material);
+      scene.add(shape);
 
       /*
       		 * レンダラーの作成
