@@ -2,10 +2,10 @@
 <html lang="en"></html>
 <head>
   <meta charset="UTF-8">
-  <title>Threejs cube01 Sample</title>
+  <title>Threejs particle01 Sample</title>
 </head>
 <body>
-  <h1>キューブを複数描画</h1>
+  <h1>パーティクル</h1>
   <ul>
     <li><a href="../index.html">HOME</a></li>
     <li><a href="../cube/cube01.html">cube01</a></li>
@@ -43,14 +43,13 @@
     function Webgl() {}
 
     Webgl.init = function() {
-      console.log(requestAnimationFrame);
       this.width = window.innerWidth;
       this.height = window.innerHeight;
       this.initCamera();
       this.createScene();
       this.helper();
       this.initMaterial();
-      return this.renderFuc();
+      return this.renderFun();
     };
 
 
@@ -65,7 +64,7 @@
       near = 1;
       fav = 1000;
       this.camera = new THREE.PerspectiveCamera(fov, aspect, near, fav);
-      this.camera.position.set(50, 50, 150);
+      this.camera.position.set(50, 50, 200);
       this.camera.up.set(0, 0, 1);
       return this.camera.lookAt({
         x: 0,
@@ -87,12 +86,12 @@
 
 
     /*
-    	 * 軸ヘルパー
+    	 * ヘルパー
      */
 
     Webgl.helper = function() {
       var axis;
-      axis = new THREE.AxisHelper(100);
+      axis = new THREE.AxisHelper(200);
       axis.position.set(0, 0, 0);
       return this.group.add(axis);
     };
@@ -103,21 +102,32 @@
      */
 
     Webgl.initMaterial = function() {
-      var boxsize, geometry, i, j, material, num, ref, results, span;
-      num = 100;
-      span = 60;
-      results = [];
-      for (i = j = 0, ref = num; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
-        boxsize = Math.random() * 10;
-        geometry = new THREE.CubeGeometry(boxsize, boxsize, boxsize);
-        material = new THREE.MeshNormalMaterial;
-        this.cube = new THREE.Mesh(geometry, material);
-        this.cube.position.x = Math.random() * span - span / 2;
-        this.cube.position.y = Math.random() * span - span / 2;
-        this.cube.position.z = Math.random() * span - span / 2;
-        results.push(this.group.add(this.cube));
+      var color, colors, count, geometry, i, j, material, particle, ref, texture, vertex;
+      geometry = new THREE.Geometry;
+      count = 1000;
+      colors = [];
+      for (i = j = 0, ref = count; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
+        vertex = new THREE.Vector3;
+        vertex.x = (Math.random() - 0.5) * 100;
+        vertex.y = (Math.random() - 0.5) * 100;
+        vertex.z = (Math.random() - 0.5) * 100;
+        geometry.vertices.push(vertex);
+        color = new THREE.Color(0xFFFFFF);
+        color.setHSL(210 / 360, 1, 0.5);
+        colors.push(color);
       }
-      return results;
+      geometry.colors = colors;
+      texture = THREE.ImageUtils.loadTexture("/images/particle.png");
+      material = new THREE.PointCloudMaterial({
+        size: 10,
+        vertexColors: true,
+        map: texture,
+        blending: THREE.AdditiveBlending,
+        transparent: true
+      });
+      particle = new THREE.PointCloud(geometry, material);
+      particle.sortParticles = true;
+      return this.group.add(particle);
     };
 
 
@@ -125,18 +135,11 @@
     	 * レンダラーの作成
      */
 
-    Webgl.renderFuc = function() {
+    Webgl.renderFun = function() {
       this.renderer = new THREE.WebGLRenderer;
       this.renderer.setSize(this.width, this.height);
       document.body.appendChild(this.renderer.domElement);
-      this.renderer.render(this.scene, this.camera);
-      return this.animation();
-    };
-
-    Webgl.animation = function() {
-      this.camera.rotation.z += 0.002;
-      this.renderer.render(this.scene, this.camera);
-      return requestAnimationFrame(this.animation.bind(this));
+      return this.renderer.render(this.scene, this.camera);
     };
 
     return Webgl;
