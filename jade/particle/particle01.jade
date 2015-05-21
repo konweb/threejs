@@ -20,6 +20,7 @@ block content
 			
 			window.addEventListener "DOMContentLoaded", ->
 				Webgl.init()
+				Webgl.animation()
 
 			class Webgl
 				@init = ->
@@ -28,21 +29,23 @@ block content
 
 					@initCamera()
 					@createScene()
-					@helper()
+					#@helper()
 					@initMaterial()
 					@renderFun()
+					
+					window.addEventListener "resize", @resize.bind this, false
 
 				###
 				 * カメラの設定
 				###
 				@initCamera = ->
-					fov = 45
+					fov = 60
 					aspect = @width / @height
 					near = 1
 					fav = 1000
 
 					@camera = new THREE.PerspectiveCamera fov, aspect, near, fav
-					@camera.position.set 50, 50, 200
+					@camera.position.set 50, 50, 500
 					@camera.up.set 0, 0, 1
 					@camera.lookAt {x:0, y:0, z: 0}
 
@@ -51,16 +54,14 @@ block content
 				###
 				@createScene = ->
 					@scene = new THREE.Scene
-					@group = new THREE.Group
-					@scene.add @group
 
 				###
 				 * ヘルパー
 				###
 				@helper = ->
-					axis = new THREE.AxisHelper 200
+					axis = new THREE.AxisHelper 5000
 					axis.position.set 0, 0, 0
-					@group.add axis
+					@scene.add axis
 
 				###
 				 * メッシュの作成
@@ -72,30 +73,43 @@ block content
 					count = 1000
 					colors = []
 					for i in [0...count]
-						vertex = new THREE.Vector3
-						vertex.x = (Math.random() - 0.5)*100
-						vertex.y = (Math.random() - 0.5)*100
-						vertex.z = (Math.random() - 0.5)*100
+						vertex = new THREE.Vector3();
+						vertex.x = Math.random() * 900 - 450;
+						vertex.y = Math.random() * 900 - 450;
+						vertex.z = Math.random() * 900 - 450;
 						geometry.vertices.push vertex
-						color = new THREE.Color(0xFFFFFF);
-						color.setHSL(210/360, 1, 0.5);
-						colors.push(color);
 
-					geometry.colors = colors
+					@parameters = [
+						[ [1, 1, 0.5], 5 ],
+						[ [0.95, 1, 0.5], 4 ],
+						[ [0.90, 1, 0.5], 3 ],
+						[ [0.85, 1, 0.5], 2 ],
+						[ [0.80, 1, 0.5], 1 ]
+					];
 					
-					#マテリアルの作成
-					texture = THREE.ImageUtils.loadTexture( "/images/particle.png" );
-					material = new THREE.PointCloudMaterial
-						size: 10,
-						vertexColors: true,
-						map: texture,
-						blending: THREE.AdditiveBlending,
-						transparent: true
+					@materials = []
+					for v,i in @parameters
+						color = @parameters[i][0];
+						size  = @parameters[i][1];
 
+						@materials[i] = new THREE.PointCloudMaterial size: size
+						###
+						time = Date.now() * 0.00005
+						h = ( 360 * ( color[0] + time ) % 360 ) / 360
+						@materials[i].color.setHSL( h, color[1], color[2] )
+						###
+						particles = new THREE.PointCloud geometry, @materials[i]
+						particles.rotation.x = Math.random() * 6;
+						particles.rotation.y = Math.random() * 6;
+						particles.rotation.z = Math.random() * 6;
 
-					particle = new THREE.PointCloud geometry, material
-					particle.sortParticles = true
-					@group.add particle
+						@scene.add( particles );
+
+					###
+					@materials = new THREE.PointCloudMaterial size: 4
+					particles = new THREE.PointCloud geometry, @materials
+					@scene.add( particles );
+					###
 
 				###
 				 * レンダラーの作成
@@ -103,5 +117,40 @@ block content
 				@renderFun = ->
 					@renderer = new THREE.WebGLRenderer
 					@renderer.setSize @width, @height
+					#@renderer.setClearColor 0xeeeeee
 					document.body.appendChild @renderer.domElement
 					@renderer.render @scene, @camera
+				
+				###
+				 * アニメーション
+				###
+				@animation = ->
+					requestAnimationFrame @animation.bind this
+
+					#@camera.position.x += @camera.position.x * 0.005
+					#@camera.position.y += @camera.position.y * 0.005
+					#@camera.lookAt @scene.position
+					
+					###
+					 * シーンの子オブジェクトすべての位置更新
+					###
+					time = Date.now() * 0.00005
+					for v,k in @scene.children
+						object = @scene.children[k]
+						if object instanceof THREE.PointCloud
+							object.rotation.y = time * ( k < 4 ? k + 1 : - ( k + 1 ) )
+
+					###
+					 * シーンの子オブジェクトすべての位置更新
+					###
+					for v,j in @materials
+						color = @parameters[j][0];
+						h = ( 360 * ( color[0] + time ) % 360 ) / 360;
+						@materials[j].color.setHSL( h, color[1], color[2] );
+
+					@renderer.render @scene, @camera
+
+				@resize = ->
+					@camera.aspect = window.innerWidth / window.innerHeight
+					@camera.updateProjectionMatrix()
+					@renderer.setSize window.innerWidth, window.innerHeight

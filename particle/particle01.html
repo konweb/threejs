@@ -36,7 +36,8 @@
   window.requestAnimationFrame = requestAnimationFrame;
 
   window.addEventListener("DOMContentLoaded", function() {
-    return Webgl.init();
+    Webgl.init();
+    return Webgl.animation();
   });
 
   Webgl = (function() {
@@ -47,9 +48,9 @@
       this.height = window.innerHeight;
       this.initCamera();
       this.createScene();
-      this.helper();
       this.initMaterial();
-      return this.renderFun();
+      this.renderFun();
+      return window.addEventListener("resize", this.resize.bind(this, false));
     };
 
 
@@ -59,12 +60,12 @@
 
     Webgl.initCamera = function() {
       var aspect, fav, fov, near;
-      fov = 45;
+      fov = 60;
       aspect = this.width / this.height;
       near = 1;
       fav = 1000;
       this.camera = new THREE.PerspectiveCamera(fov, aspect, near, fav);
-      this.camera.position.set(50, 50, 200);
+      this.camera.position.set(50, 50, 500);
       this.camera.up.set(0, 0, 1);
       return this.camera.lookAt({
         x: 0,
@@ -79,9 +80,7 @@
      */
 
     Webgl.createScene = function() {
-      this.scene = new THREE.Scene;
-      this.group = new THREE.Group;
-      return this.scene.add(this.group);
+      return this.scene = new THREE.Scene;
     };
 
 
@@ -91,9 +90,9 @@
 
     Webgl.helper = function() {
       var axis;
-      axis = new THREE.AxisHelper(200);
+      axis = new THREE.AxisHelper(5000);
       axis.position.set(0, 0, 0);
-      return this.group.add(axis);
+      return this.scene.add(axis);
     };
 
 
@@ -102,32 +101,47 @@
      */
 
     Webgl.initMaterial = function() {
-      var color, colors, count, geometry, i, j, material, particle, ref, texture, vertex;
+      var color, colors, count, geometry, i, l, len, m, particles, ref, ref1, results, size, v, vertex;
       geometry = new THREE.Geometry;
       count = 1000;
       colors = [];
-      for (i = j = 0, ref = count; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
-        vertex = new THREE.Vector3;
-        vertex.x = (Math.random() - 0.5) * 100;
-        vertex.y = (Math.random() - 0.5) * 100;
-        vertex.z = (Math.random() - 0.5) * 100;
+      for (i = l = 0, ref = count; 0 <= ref ? l < ref : l > ref; i = 0 <= ref ? ++l : --l) {
+        vertex = new THREE.Vector3();
+        vertex.x = Math.random() * 900 - 450;
+        vertex.y = Math.random() * 900 - 450;
+        vertex.z = Math.random() * 900 - 450;
         geometry.vertices.push(vertex);
-        color = new THREE.Color(0xFFFFFF);
-        color.setHSL(210 / 360, 1, 0.5);
-        colors.push(color);
       }
-      geometry.colors = colors;
-      texture = THREE.ImageUtils.loadTexture("/images/particle.png");
-      material = new THREE.PointCloudMaterial({
-        size: 10,
-        vertexColors: true,
-        map: texture,
-        blending: THREE.AdditiveBlending,
-        transparent: true
-      });
-      particle = new THREE.PointCloud(geometry, material);
-      particle.sortParticles = true;
-      return this.group.add(particle);
+      this.parameters = [[[1, 1, 0.5], 5], [[0.95, 1, 0.5], 4], [[0.90, 1, 0.5], 3], [[0.85, 1, 0.5], 2], [[0.80, 1, 0.5], 1]];
+      this.materials = [];
+      ref1 = this.parameters;
+      results = [];
+      for (i = m = 0, len = ref1.length; m < len; i = ++m) {
+        v = ref1[i];
+        color = this.parameters[i][0];
+        size = this.parameters[i][1];
+        this.materials[i] = new THREE.PointCloudMaterial({
+          size: size
+
+          /*
+          			time = Date.now() * 0.00005
+          			h = ( 360 * ( color[0] + time ) % 360 ) / 360
+          			@materials[i].color.setHSL( h, color[1], color[2] )
+           */
+        });
+        particles = new THREE.PointCloud(geometry, this.materials[i]);
+        particles.rotation.x = Math.random() * 6;
+        particles.rotation.y = Math.random() * 6;
+        particles.rotation.z = Math.random() * 6;
+        results.push(this.scene.add(particles));
+      }
+      return results;
+
+      /*
+      		@materials = new THREE.PointCloudMaterial size: 4
+      		particles = new THREE.PointCloud geometry, @materials
+      		@scene.add( particles );
+       */
     };
 
 
@@ -140,6 +154,49 @@
       this.renderer.setSize(this.width, this.height);
       document.body.appendChild(this.renderer.domElement);
       return this.renderer.render(this.scene, this.camera);
+    };
+
+
+    /*
+    	 * アニメーション
+     */
+
+    Webgl.animation = function() {
+      var color, h, j, k, l, len, len1, m, object, ref, ref1, ref2, time, v;
+      requestAnimationFrame(this.animation.bind(this));
+
+      /*
+      		 * シーンの子オブジェクトすべての位置更新
+       */
+      time = Date.now() * 0.00005;
+      ref = this.scene.children;
+      for (k = l = 0, len = ref.length; l < len; k = ++l) {
+        v = ref[k];
+        object = this.scene.children[k];
+        if (object instanceof THREE.PointCloud) {
+          object.rotation.y = time * ((ref1 = k < 4) != null ? ref1 : k + {
+            1: -(k + 1)
+          });
+        }
+      }
+
+      /*
+      		 * シーンの子オブジェクトすべての位置更新
+       */
+      ref2 = this.materials;
+      for (j = m = 0, len1 = ref2.length; m < len1; j = ++m) {
+        v = ref2[j];
+        color = this.parameters[j][0];
+        h = (360 * (color[0] + time) % 360) / 360;
+        this.materials[j].color.setHSL(h, color[1], color[2]);
+      }
+      return this.renderer.render(this.scene, this.camera);
+    };
+
+    Webgl.resize = function() {
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+      return this.renderer.setSize(window.innerWidth, window.innerHeight);
     };
 
     return Webgl;
