@@ -10,91 +10,96 @@ block content
 	mixin list(1)
 
 	script(src="../common/threejs/build/three.min.js")
-	script.
-		window.addEventListener("DOMContentLoaded", function(){
-			/* カメラを用意
-			 * THREE.PerspectiveCamera(画角, 縦横比, クリッピング手前, クリッピング奥);
-			 * クリッピング手前からクリッピング奥までが描画される
-			*/
-			var width = window.innerWidth,
-					height = window.innerHeight,
-					fov = 80,
-					aspect = width / height,
-					near = 80,
-					far = 1000,
-					camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+	script
+		:coffee
+			requestAnimationFrame = window.requestAnimationFrame ||
+															window.mozRequestAnimationFrame ||
+															window.webkitRequestAnimationFrame ||
+															window.msRequestAnimationFrame
+			window.requestAnimationFrame = requestAnimationFrame
 
-			// z方向に500ずらす
-			camera.position.z = 500;
+			window.addEventListener "DOMContentLoaded", ->
+				Webgl.init()
 
+			class Webgl
+				@init = ->
+					console.log requestAnimationFrame
+					# param
+					@width = window.innerWidth
+					@height = window.innerHeight
 
-			/*
-			 * シーンの準備
-			 * シーンは空間
-			 * ここにオブジェクトを詰め込んでいく
-			*/
-			var scene = new THREE.Scene();
+					# func
+					@initCamera()
+					@createScene()
+					@helper()
+					@initMaterial()
+					@renderFuc()
+				
+				###
+				 * カメラの設定
+				###
+				@initCamera = ->
+					fov = 45
+					aspect = @width / @height
+					near = 1
+					fav = 1000
 
+					@camera = new THREE.PerspectiveCamera fov, aspect, near, fav
+					@camera.position.set 50, 50, 150
+					@camera.up.set 0, 0, 1
+					@camera.lookAt {x: 0, y: 0, z: 0}
 
-			/*
-			 * メッシュの作成
-			 * メッシュはポリゴンの集合で作られたオブジェクト
-			 * メッシュはジオメトリ(座標)とマテリアル(素材)で構成される
-			*/
+				###
+				 * シーンの作成
+				###
+				@createScene = ->
+					@scene = new THREE.Scene
 
-			// ジオメトリの作成
-			// THREE.CubeGeometry(横幅, 高さ, (横の分割数, 縦の分割数, 奥行きの文化かつ数, 表面, sides));
-			var geometry = new THREE.CubeGeometry(200, 200 ,200);
+					#グループの追加
+					@group = new THREE.Group
+					@scene.add @group
 
-			// マテリアルの作成
-			// THREE.MeshLambertMaterial({object});
-			var material = new THREE.MeshLambertMaterial({color: 0x660000});
+				###
+				 * 軸ヘルパー
+				###
+				@helper = ->
+					axis = new THREE.AxisHelper 100
+					axis.position.set 0, 0, 0
+					@group.add axis
 
-			// メッシュの作成
-			var cubeMesh = new THREE.Mesh(geometry, material);
-			cubeMesh.rotation.x = 10;
-			cubeMesh.rotation.y = 10;
+				###
+				 * メッシュの作成
+				###
+				@initMaterial = ->
+					num = 100
+					span = 60
+					for i in [0...num]
+						# ジオメトリーの作成
+						boxsize = Math.random() * 10
+						geometry = new THREE.CubeGeometry boxsize, boxsize, boxsize
 
+						# マテリアルの作成
+						material = new THREE.MeshNormalMaterial
 
-			/*
-			 * メッシュをシーンに追加
-			*/
-			scene.add(cubeMesh);
+						@cube = new THREE.Mesh geometry, material
+						# 正座標に発生させ、原点に半分戻す
+						@cube.position.x = Math.random() * span - span/2
+						@cube.position.y = Math.random() * span - span/2
+						@cube.position.z = Math.random() * span - span/2
+						@group.add @cube
 
+				###
+				 * レンダラーの作成
+				###
+				@renderFuc = ->
+					@renderer = new THREE.WebGLRenderer
+					@renderer.setSize @width, @height
+					document.body.appendChild @renderer.domElement
+					@renderer.render @scene, @camera
+					@animation()
 
-			/*
-			 * 光源の作成
-			*/
-			var directionalLight = new THREE.DirectionalLight(0xffffff, 3);
-			directionalLight.position.z = 3;
+				@animation = ->
+					@camera.rotation.z += 0.002;
+					@renderer.render @scene, @camera
+					requestAnimationFrame @animation.bind @
 
-
-			/*
-			 * 光源をシーンに追加
-			*/
-			scene.add(directionalLight);
-
-
-			/*
-			 * レンダラーの用意
-			 * 描画を行う準備
-			*/
-			var renderer = new THREE.WebGLRenderer();
-
-			// 大きさの定義
-			// レンダラー.setSize(横幅, 高さ);
-			renderer.setSize(width, height);
-
-			// DOMにcanvasを追加
-			document.body.appendChild(renderer.domElement);
-
-			console.log(cubeMesh);
-			cubeMesh.rotation.x = 30;
-			//- cubeMesh.geometry.parameters.width = 30;
-			//- cubeMesh.geometry.parameters.height = 30;
-			/*
-			 * レンダリング
-			 * 描画処理
-			*/
-			renderer.render(scene, camera);
-		});
