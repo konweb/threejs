@@ -9,9 +9,7 @@ block content
 
 	mixin list(1)
 
-	script(src="../common/threejs/build/three.min.js")
-	script(src="../common/lib/CanvasRenderer.js")
-	script(src="../common/lib/Projector.js")
+	include ../inc/_script-sets.jade
 	script.
 		var requestAnimationFrame = window.requestAnimationFrame ||
 																window.mozRequestAnimationFrame ||

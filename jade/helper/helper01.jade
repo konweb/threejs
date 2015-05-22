@@ -8,7 +8,8 @@ block content
 	h1 軸
 
 	mixin list(1)
-	script(src="../common/threejs/build/three.min.js")
+	
+	include ../inc/_script-sets.jade
 	script
 		:coffee
 			requestAnimationFrame = window.requestAnimationFrame ||
