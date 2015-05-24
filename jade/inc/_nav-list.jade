@@ -20,14 +20,16 @@ mixin list(val)
 	- lists.push({link: "helper/helper01", text: "helper01"});
 	- lists.push({link: "demo/circle2d-animation", text: "DEMO: circle2d-animation"});
 	- lists.push({link: "demo/buffer-geometry", text: "DEMO: buffer-geometry"});
-
-	ul
-		- for (var i = 0; i < lists.length; i++)
-			if val === 0
-				li: a(href="./#{lists[i].link}.html") #{lists[i].text}
-			else if val === 1
-				li: a(href="../#{lists[i].link}.html") #{lists[i].text}
-			else if val === 2
-				li: a(href="../../#{lists[i].link}.html") #{lists[i].text}
-			else
-				li: a(href="../../../#{lists[i].link}.html") #{lists[i].text}
+	
+	.nav
+		.menu-icon
+		ul
+			- for (var i = 0; i < lists.length; i++)
+				if val === 0
+					li: a(href="./#{lists[i].link}.html") #{lists[i].text}
+				else if val === 1
+					li: a(href="../#{lists[i].link}.html") #{lists[i].text}
+				else if val === 2
+					li: a(href="../../#{lists[i].link}.html") #{lists[i].text}
+				else
+					li: a(href="../../../#{lists[i].link}.html") #{lists[i].text}

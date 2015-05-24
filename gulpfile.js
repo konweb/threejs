@@ -23,10 +23,10 @@ gulp.task('watch', function(){
 	};
 	gulp.watch([dir.lib.template + '/**/*.jade'], gaze_opt, ['jade']);
 	gulp.watch([root + "**/*.html"], gaze_opt, ['bs-reload']);
-	gulp.watch([dir.lib.sass + '/*.+(scss|sass)'], gaze_opt, ['sass']);
+	gulp.watch([dir.lib.sass + '/**/*.+(scss|sass)'], gaze_opt, ['sass']);
 	gulp.watch([dir.dist.css + '/*.css'], gaze_opt, ['css']);
 	// gulp.watch([dir.lib.js + '/*.js'], gaze_opt, ['scripts']);
-	gulp.watch([root + '**/js/*.js'], gaze_opt, ['bs-reload']);
+	gulp.watch([root + '**/+(js|src)/*.js'], gaze_opt, ['bs-reload']);
 });
 
 

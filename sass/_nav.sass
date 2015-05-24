@@ -1,0 +1,52 @@
+.menu-bg
+	background: rgba(0, 0, 0, .7)
+	width: 100%
+	height: 0
+	position: fixed
+	transition: .5s
+	&.is-active
+		height: 100%
+
+.nav
+	height: 100%
+	position: fixed
+	top: 0
+	left: -220px
+	transition: all .3s ease .3s
+	&.is-active
+		left: 0
+
+	.menu-icon
+		background: darken($bg_nav, 10%)
+		display: block
+		width: 30px
+		height: 100%
+		position: absolute
+		right: -30px
+		&:after
+			content: "\f394"
+			color: #fff
+			font-family: ionicons
+			font-size: 20px
+			text-align: right
+			vertical-align: middle
+			position: absolute
+			top: 50%
+			right: 7px
+
+	ul
+		background: $bg_nav
+		width: 220px
+		height: 100%
+		list-style: none
+		margin: 0
+		padding: 0
+
+	a
+		display: block
+		color: rgba(255,255,255,0.5)
+		padding: 7px $base_pa
+		transition: .2s
+		&:hover
+			background: darken($bg_nav, 10%)
+			color: #fff
