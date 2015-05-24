@@ -2,6 +2,7 @@ var gulp        = require('gulp'),
 		$           = require('gulp-load-plugins')(),
 		browserSync = require('browser-sync'),
 		root        = './',
+		distDemos   = root + 'demos/',
 		dir         = {
 			lib: {
 				sass: root + 'sass/',
@@ -9,9 +10,8 @@ var gulp        = require('gulp'),
 				template: root + 'jade/'
 			},
 			dist: {
-				css: root + 'css/',
-				js: root + 'js/',
-				template: root
+				css: distDemos + 'css/',
+				js: distDemos + 'js/'
 			}
 		};
 
@@ -64,7 +64,7 @@ gulp.task('jade', function(){
 		.pipe($.jade({
 			pretty: true
 		}))
-		.pipe(gulp.dest(dir.dist.template));
+		.pipe(gulp.dest(distDemos));
 		// .pipe(browserSync.reload({stream: true, once: true}));
 });
 

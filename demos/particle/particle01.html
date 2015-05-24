@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en"></html>
+<head>
+  <meta charset="UTF-8">
+  <title>Threejs particle01 Sample</title>
+</head>
+<body>
+  <h1>パーティクル</h1>
+  <ul>
+    <li><a href="../index.html">HOME</a></li>
+    <li><a href="../cube/cube01.html">cube01</a></li>
+    <li><a href="../cube/cube02.html">cube02</a></li>
+    <li><a href="../cube/cube03.html">cube03</a></li>
+    <li><a href="../line/line01.html">line01</a></li>
+    <li><a href="../line/line02.html">line02</a></li>
+    <li><a href="../line/line03.html">line03</a></li>
+    <li><a href="../line/line04.html">line04</a></li>
+    <li><a href="../circle/circle01.html">circle01</a></li>
+    <li><a href="../circle/circle02.html">circle02</a></li>
+    <li><a href="../particle/particle01.html">particle01</a></li>
+    <li><a href="../uniqe/uniqe01.html">uniqe01</a></li>
+    <li><a href="../uniqe/uniqe02.html">uniqe02</a></li>
+    <li><a href="../uniqe/uniqe03.html">uniqe03</a></li>
+    <li><a href="../physics/physics01.html">physics01</a></li>
+    <li><a href="../other/other01.html">other01</a></li>
+    <li><a href="../other/other02.html">other02</a></li>
+    <li><a href="../helper/helper01.html">helper01</a></li>
+    <li><a href="../demo/circle2d-animation.html">DEMO: circle2d-animation</a></li>
+    <li><a href="../demo/buffer-geometry.html">DEMO: buffer-geometry</a></li>
+  </ul>
+  <script src="../src/three.min.js"></script>
+  <script src="../src/ConvexGeometry.js"></script>
+  <script src="../src/CanvasRenderer.js"></script>
+  <script src="../src/Projector.js"></script>
+  <script src="../src/cannon.min.js"></script>
+  <script>(function() {
+  var Webgl, requestAnimationFrame;
+
+  requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+  window.requestAnimationFrame = requestAnimationFrame;
+
+  window.addEventListener("DOMContentLoaded", function() {
+    Webgl.init();
+    return Webgl.animation();
+  });
+
+  Webgl = (function() {
+    function Webgl() {}
+
+    Webgl.init = function() {
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      this.initCamera();
+      this.createScene();
+      this.initMaterial();
+      this.renderFun();
+      return window.addEventListener("resize", this.resize.bind(this, false));
+    };
+
+
+    /*
+    	 * カメラの設定
+     */
+
+    Webgl.initCamera = function() {
+      var aspect, fav, fov, near;
+      fov = 60;
+      aspect = this.width / this.height;
+      near = 1;
+      fav = 1000;
+      this.camera = new THREE.PerspectiveCamera(fov, aspect, near, fav);
+      this.camera.position.set(50, 50, 500);
+      this.camera.up.set(0, 0, 1);
+      return this.camera.lookAt({
+        x: 0,
+        y: 0,
+        z: 0
+      });
+    };
+
+
+    /*
+    	 * シーンの作成
+     */
+
+    Webgl.createScene = function() {
+      return this.scene = new THREE.Scene;
+    };
+
+
+    /*
+    	 * ヘルパー
+     */
+
+    Webgl.helper = function() {
+      var axis;
+      axis = new THREE.AxisHelper(5000);
+      axis.position.set(0, 0, 0);
+      return this.scene.add(axis);
+    };
+
+
+    /*
+    	 * メッシュの作成
+     */
+
+    Webgl.initMaterial = function() {
+      var color, colors, count, geometry, i, l, len, m, particles, ref, ref1, results, size, v, vertex;
+      geometry = new THREE.Geometry;
+      count = 1000;
+      colors = [];
+      for (i = l = 0, ref = count; 0 <= ref ? l < ref : l > ref; i = 0 <= ref ? ++l : --l) {
+        vertex = new THREE.Vector3();
+        vertex.x = Math.random() * 900 - 450;
+        vertex.y = Math.random() * 900 - 450;
+        vertex.z = Math.random() * 900 - 450;
+        geometry.vertices.push(vertex);
+      }
+      this.parameters = [[[1, 1, 0.5], 5], [[0.95, 1, 0.5], 4], [[0.90, 1, 0.5], 3], [[0.85, 1, 0.5], 2], [[0.80, 1, 0.5], 1]];
+      this.materials = [];
+      ref1 = this.parameters;
+      results = [];
+      for (i = m = 0, len = ref1.length; m < len; i = ++m) {
+        v = ref1[i];
+        color = this.parameters[i][0];
+        size = this.parameters[i][1];
+        this.materials[i] = new THREE.PointCloudMaterial({
+          size: size
+
+          /*
+          			time = Date.now() * 0.00005
+          			h = ( 360 * ( color[0] + time ) % 360 ) / 360
+          			@materials[i].color.setHSL( h, color[1], color[2] )
+           */
+        });
+        particles = new THREE.PointCloud(geometry, this.materials[i]);
+        particles.rotation.x = Math.random() * 6;
+        particles.rotation.y = Math.random() * 6;
+        particles.rotation.z = Math.random() * 6;
+        results.push(this.scene.add(particles));
+      }
+      return results;
+
+      /*
+      		@materials = new THREE.PointCloudMaterial size: 4
+      		particles = new THREE.PointCloud geometry, @materials
+      		@scene.add( particles );
+       */
+    };
+
+
+    /*
+    	 * レンダラーの作成
+     */
+
+    Webgl.renderFun = function() {
+      this.renderer = new THREE.WebGLRenderer;
+      this.renderer.setSize(this.width, this.height);
+      document.body.appendChild(this.renderer.domElement);
+      return this.renderer.render(this.scene, this.camera);
+    };
+
+
+    /*
+    	 * アニメーション
+     */
+
+    Webgl.animation = function() {
+      var color, h, j, k, l, len, len1, m, object, ref, ref1, ref2, time, v;
+      requestAnimationFrame(this.animation.bind(this));
+
+      /*
+      		 * シーンの子オブジェクトすべての位置更新
+       */
+      time = Date.now() * 0.00005;
+      ref = this.scene.children;
+      for (k = l = 0, len = ref.length; l < len; k = ++l) {
+        v = ref[k];
+        object = this.scene.children[k];
+        if (object instanceof THREE.PointCloud) {
+          object.rotation.y = time * ((ref1 = k < 4) != null ? ref1 : k + {
+            1: -(k + 1)
+          });
+        }
+      }
+
+      /*
+      		 * シーンの子オブジェクトすべての位置更新
+       */
+      ref2 = this.materials;
+      for (j = m = 0, len1 = ref2.length; m < len1; j = ++m) {
+        v = ref2[j];
+        color = this.parameters[j][0];
+        h = (360 * (color[0] + time) % 360) / 360;
+        this.materials[j].color.setHSL(h, color[1], color[2]);
+      }
+      return this.renderer.render(this.scene, this.camera);
+    };
+
+    Webgl.resize = function() {
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+      return this.renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+
+    return Webgl;
+
+  })();
+
+}).call(this);
+
+  </script>
+</body>
