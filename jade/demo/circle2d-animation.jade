@@ -25,7 +25,7 @@ block content
 					opacity = 0.5,
 					flag = "large",
 					count = 0,
-					width = window.innerWidth,
+					width = document.body.clientWidth,
 					height = window.innerHeight;
 
 			init();
@@ -72,7 +72,7 @@ block content
 				*/
 				renderer = new THREE.CanvasRenderer();
 				renderer.setPixelRatio(window.devicePixelRatio);
-				renderer.setSize(window.innerWidth, window.innerHeight);
+				renderer.setSize(document.body.clientWidth, window.innerHeight);
 				renderer.setClearColorHex(0xe4bbf9, 0.7);
 				document.body.appendChild(renderer.domElement);
 				renderer.render(scene, camera);

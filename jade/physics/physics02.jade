@@ -1,0 +1,167 @@
+include ./../inc/_nav-list.jade
+extends ../inc/_head.jade
+
+block title
+	title Threejs Cannonjs Sample02
+
+block content
+	h1 cannon.js
+	
+	mixin list(1)
+
+	:markdown
+		## 使い方2 Sample
+		### 初期設定
+		#### CANNON.jsの世界を生成
+		```
+		world = new CANNON.World();
+		```
+
+		#### 重力の設定
+		```
+		world.gravity.set(0,0,0);// 重力
+		world.broadphase = new CANNON.NaiveBroadphase();// 衝突している可能性のある剛体を見つける
+		world.solver.iterations = 10;// 反復計算回数
+		```
+
+		> __剛体__  
+		> 剛体はどんな力を受けても形や体積を変えない。剛体の運動は，重心に全質量が集中した仮想的質点が行う重心運動と，重心のまわりの回転運動とに分離して論じることができる。  
+		> [コトバンク > 剛体とは](https://kotobank.jp/word/%E5%89%9B%E4%BD%93-62662)
+
+
+	include ../inc/_script-sets.jade
+	script.
+		requestAnimationFrame = window.requestAnimationFrame ||
+														window.mozRequestAnimationFrame ||
+														window.webkitRequestAnimationFrame ||
+														window.msRequestAnimationFrame;
+		window.requestAnimationFrame = requestAnimationFrame;
+
+		var world,cubePhy,N = 40,
+				camera,scene,renderer,geometry,material,mesh,cube,
+				width, height;
+
+		initCannon();
+		init();
+		animate();
+
+		function initCannon(){
+			/*
+			 * worldの設定
+			*/
+			world = new CANNON.World();// worldを生成
+			world.broadphase = new CANNON.NaiveBroadphase();// 衝突している可能性のある剛体を見つける
+			world.gravity.set(0,-9.82,0);// 重力の設定
+			world.solver.tolerance = 0.001;
+
+			/*
+			 * 物理演算対象の剛体[地面]を生成
+			*/
+			var plane,ground,shape,cube;
+			plane = new CANNON.Plane();//　地面の生成
+			ground = new CANNON.Body({mass: 0});// 質量0の剛体を生成
+			ground.addShape(plane);// bodyに追加
+			ground.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);// x軸から90度回転
+			world.add(ground);// worldに剛体を追加
+			/*
+			 * 物理演算対象の剛体[キューブ]を生成
+			*/
+			shape = new CANNON.Box(new CANNON.Vec3(1, 1, 1));// キューブの生成
+			cubePhy = new CANNON.Body({mass: 1});// 質量1の剛体を生成
+			cubePhy.addShape(shape);// bodyに追加
+			cubePhy.position.y = 10;
+			cubePhy.angularVelocity.set(10, 10, 10);
+			world.add(cubePhy);
+		}
+
+		function init(){
+			/*
+			 * シーンの作成
+			*/
+			scene = new THREE.Scene();
+			scene.fog = new THREE.Fog(0x000000, 1, 100);
+
+			/*
+			 * カメラの設定
+			*/
+			var fov,aspect,near,fav;
+			width  = window.innerWidth;
+			height = window.innerHeight;
+			fov    = 30;
+			aspect = width / height;
+			near   = 1;
+			fav    = 10000;
+
+			//- camera = new THREE.PerspectiveCamera(fov, aspect, near, fav);
+			camera = new THREE.PerspectiveCamera(30, 800 / 600, 1, 10000);
+			camera.position.set(Math.cos(Math.PI / 5) * 30, 5, Math.sin(Math.PI / 5) * 30);
+			camera.lookAt(new THREE.Vector3(0, 0, 0));
+			scene.add(camera);
+
+			/*
+			 * ライトの設定
+			*/
+			var light = new THREE.DirectionalLight(0xffffff, 2);
+			light.position.set(10, 10, -10);
+			light.castShadow = true;
+			light.shadowMapWidth = 1024;
+			light.shadowMapHeight = 1024;
+			light.shadowCameraLeft = -10;
+			light.shadowCameraRight = 10;
+			light.shadowCameraTop = 10;
+			light.shadowCameraBottom = -10;
+			light.shadowCameraFar = 100;
+			light.shadowCameraNear = 0;
+			light.shadowDarkness = 0.5;
+			scene.add(light);
+			var amb   = new THREE.AmbientLight(0x999999);
+			scene.add(amb);
+
+			/*
+			 * 地面の作成
+			*/
+			var plane,planeGeo,planeMaterial;
+			planeGeo = new THREE.PlaneGeometry(300,300);
+			planeMaterial = new THREE.MeshPhongMaterial({
+				color: 0x000000,
+				specular: 0xffffff,
+				shininess: 50
+			});
+			plane = new THREE.Mesh(planeGeo, planeMaterial);
+			plane.rotation.x = Math.PI / -2;
+			plane.position.y = 1 / 2;
+			plane.receiveShadow = true;
+			scene.add(plane);// シーンに追加
+
+			/*
+			 * キューブの作成
+			*/
+			var cubeGeo,cubeMaterial;
+			cubeGeo = new THREE.BoxGeometry(1, 1, 1, 10, 10);
+			cubeMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
+			cube = new THREE.Mesh(cubeGeo, cubeMaterial);
+			cube.castShadow = true;
+			cube.receiveShadow = true;
+			cube.position.y = 1;
+			scene.add(cube);
+
+			/*
+			 * レンダラーの設定
+			*/
+			renderer = new THREE.WebGLRenderer({antialias: true});
+			renderer.setSize(document.body.clientWidth, height);
+			renderer.setClearColor(0x000000, 1);
+			renderer.shadowMapEnabled = true;
+			document.body.appendChild(renderer.domElement);
+			renderer.render(scene, camera);
+		}
+
+		function animate() {
+			requestAnimationFrame(animate);
+			// 物理エンジンの時間を進める
+			world.step(1 / 60);
+			cube.position.copy(cubePhy.position);
+			cube.quaternion.copy(cubePhy.quaternion);
+			// レンダリング	
+			renderer.render(scene, camera);
+		}

@@ -27,6 +27,7 @@
       <li><a href="./uniqe/uniqe02.html">uniqe02</a></li>
       <li><a href="./uniqe/uniqe03.html">uniqe03</a></li>
       <li><a href="./physics/physics01.html">physics01</a></li>
+      <li><a href="./physics/physics02.html">physics02</a></li>
       <li><a href="./other/other01.html">other01</a></li>
       <li><a href="./other/other02.html">other02</a></li>
       <li><a href="./helper/helper01.html">helper01</a></li>
@@ -54,6 +55,7 @@
         <li><a href="../uniqe/uniqe02.html">uniqe02</a></li>
         <li><a href="../uniqe/uniqe03.html">uniqe03</a></li>
         <li><a href="../physics/physics01.html">physics01</a></li>
+        <li><a href="../physics/physics02.html">physics02</a></li>
         <li><a href="../other/other01.html">other01</a></li>
         <li><a href="../other/other02.html">other02</a></li>
         <li><a href="../helper/helper01.html">helper01</a></li>
@@ -83,7 +85,7 @@
       			opacity = 0.5,
       			flag = "large",
       			count = 0,
-      			width = window.innerWidth,
+      			width = document.body.clientWidth,
       			height = window.innerHeight;
       
       	init();
@@ -130,7 +132,7 @@
       		*/
       		renderer = new THREE.CanvasRenderer();
       		renderer.setPixelRatio(window.devicePixelRatio);
-      		renderer.setSize(window.innerWidth, window.innerHeight);
+      		renderer.setSize(document.body.clientWidth, window.innerHeight);
       		renderer.setClearColorHex(0xe4bbf9, 0.7);
       		document.body.appendChild(renderer.domElement);
       		renderer.render(scene, camera);

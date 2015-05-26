@@ -1,5 +1,5 @@
 .menu-bg
-	background: rgba(0, 0, 0, .7)
+	background: rgba(0, 0, 0, .9)
 	width: 100%
 	height: 0
 	position: fixed
@@ -19,10 +19,10 @@
 	.menu-icon
 		background: darken($bg_nav, 10%)
 		display: block
-		width: 30px
+		width: $nav_tigger_width
 		height: 100%
 		position: absolute
-		right: -30px
+		right: -$nav_tigger_width
 		&:after
 			content: "\f394"
 			color: #fff
@@ -32,7 +32,7 @@
 			vertical-align: middle
 			position: absolute
 			top: 50%
-			right: 7px
+			right: 14px
 
 	ul
 		background: $bg_nav
@@ -41,6 +41,7 @@
 		list-style: none
 		margin: 0
 		padding: 0
+		padding-top: $base_pa*2
 
 	a
 		display: block

@@ -27,7 +27,7 @@ block content
 				 * THREE.PerspectiveCamera(画角, 縦横比, クリッピング手前, クリッピング奥);
 				 * クリッピング手前からクリッピング奥までが描画される
 				*/
-				var width  = window.innerWidth,
+				var width  = document.body.clientWidth,
 						height = window.innerHeight,
 						fov    = 27,
 						aspect = width / height,
