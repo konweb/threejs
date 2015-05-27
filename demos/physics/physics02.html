@@ -22,6 +22,8 @@
       <li><a href="./line/line04.html">line04</a></li>
       <li><a href="./circle/circle01.html">circle01</a></li>
       <li><a href="./circle/circle02.html">circle02</a></li>
+      <li><a href="./plane/plane01.html">plane01</a></li>
+      <li><a href="./plane/plane02.html">plane02</a></li>
       <li><a href="./particle/particle01.html">particle01</a></li>
       <li><a href="./uniqe/uniqe01.html">uniqe01</a></li>
       <li><a href="./uniqe/uniqe02.html">uniqe02</a></li>
@@ -50,6 +52,8 @@
         <li><a href="../line/line04.html">line04</a></li>
         <li><a href="../circle/circle01.html">circle01</a></li>
         <li><a href="../circle/circle02.html">circle02</a></li>
+        <li><a href="../plane/plane01.html">plane01</a></li>
+        <li><a href="../plane/plane02.html">plane02</a></li>
         <li><a href="../particle/particle01.html">particle01</a></li>
         <li><a href="../uniqe/uniqe01.html">uniqe01</a></li>
         <li><a href="../uniqe/uniqe02.html">uniqe02</a></li>
@@ -62,18 +66,29 @@
         <li><a href="../demo/circle2d-animation.html">DEMO: circle2d-animation</a></li>
         <li><a href="../demo/buffer-geometry.html">DEMO: buffer-geometry</a></li>
       </ul>
-    </div><h2 id="-2-sample">使い方2 Sample</h2>
+    </div>
+    <div id="canvas"></div><h2 id="-2-sample">使い方2 Sample</h2>
 <h3 id="-">初期設定</h3>
 <h4 id="cannon-js-">CANNON.jsの世界を生成</h4>
 <pre><code>world = new CANNON.World();
 </code></pre><h4 id="-">重力の設定</h4>
-<pre><code>world.gravity.set(0,0,0);// 重力
+<pre><code>world.gravity.set(0,-9.82,0);// 重力
 world.broadphase = new CANNON.NaiveBroadphase();// 衝突している可能性のある剛体を見つける
 world.solver.iterations = 10;// 反復計算回数
-</code></pre><blockquote>
-<p><strong>剛体</strong><br>剛体はどんな力を受けても形や体積を変えない。剛体の運動は，重心に全質量が集中した仮想的質点が行う重心運動と，重心のまわりの回転運動とに分離して論じることができる。<br><a href="https://kotobank.jp/word/%E5%89%9B%E4%BD%93-62662">コトバンク &gt; 剛体とは</a></p>
-</blockquote>
-
+</code></pre><h4 id="-">物理演算対象の剛体[地面]を生成</h4>
+<pre><code>plane = new CANNON.Plane();//　地面の生成
+ground = new CANNON.Body({mass: 0});// 質量0の剛体を生成
+ground.addShape(plane);// bodyに追加
+ground.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);// x軸から90度回転
+world.add(ground);// worldに剛体を追加
+</code></pre><h4 id="-">物理演算対象の剛体[キューブ]を生成</h4>
+<pre><code>shape = new CANNON.Box(new CANNON.Vec3(1, 1, 1));// キューブの生成
+cubePhy = new CANNON.Body({mass: 1});// 質量1の剛体を生成
+cubePhy.addShape(shape);// bodyに追加
+cubePhy.position.y = 10;
+cubePhy.angularVelocity.set(10, 10, 10);
+world.add(cubePhy);
+</code></pre>
     <script src="../src/three.min.js"></script>
     <script src="../src/ConvexGeometry.js"></script>
     <script src="../src/CanvasRenderer.js"></script>
@@ -203,7 +218,8 @@ world.solver.iterations = 10;// 反復計算回数
       	renderer.setSize(document.body.clientWidth, height);
       	renderer.setClearColor(0x000000, 1);
       	renderer.shadowMapEnabled = true;
-      	document.body.appendChild(renderer.domElement);
+      	var dom = document.getElementById("canvas");
+      	dom.appendChild(renderer.domElement);
       	renderer.render(scene, camera);
       }
       

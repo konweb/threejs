@@ -9,6 +9,8 @@ block content
 	
 	mixin list(1)
 
+	div#canvas
+
 	:markdown
 		## 使い方2 Sample
 		### 初期設定
@@ -19,15 +21,29 @@ block content
 
 		#### 重力の設定
 		```
-		world.gravity.set(0,0,0);// 重力
+		world.gravity.set(0,-9.82,0);// 重力
 		world.broadphase = new CANNON.NaiveBroadphase();// 衝突している可能性のある剛体を見つける
 		world.solver.iterations = 10;// 反復計算回数
 		```
 
-		> __剛体__  
-		> 剛体はどんな力を受けても形や体積を変えない。剛体の運動は，重心に全質量が集中した仮想的質点が行う重心運動と，重心のまわりの回転運動とに分離して論じることができる。  
-		> [コトバンク > 剛体とは](https://kotobank.jp/word/%E5%89%9B%E4%BD%93-62662)
+		#### 物理演算対象の剛体[地面]を生成
+		```
+		plane = new CANNON.Plane();//　地面の生成
+		ground = new CANNON.Body({mass: 0});// 質量0の剛体を生成
+		ground.addShape(plane);// bodyに追加
+		ground.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);// x軸から90度回転
+		world.add(ground);// worldに剛体を追加
+		```
 
+		#### 物理演算対象の剛体[キューブ]を生成
+		```
+		shape = new CANNON.Box(new CANNON.Vec3(1, 1, 1));// キューブの生成
+		cubePhy = new CANNON.Body({mass: 1});// 質量1の剛体を生成
+		cubePhy.addShape(shape);// bodyに追加
+		cubePhy.position.y = 10;
+		cubePhy.angularVelocity.set(10, 10, 10);
+		world.add(cubePhy);
+		```
 
 	include ../inc/_script-sets.jade
 	script.
@@ -152,7 +168,8 @@ block content
 			renderer.setSize(document.body.clientWidth, height);
 			renderer.setClearColor(0x000000, 1);
 			renderer.shadowMapEnabled = true;
-			document.body.appendChild(renderer.domElement);
+			var dom = document.getElementById("canvas");
+			dom.appendChild(renderer.domElement);
 			renderer.render(scene, camera);
 		}
 
