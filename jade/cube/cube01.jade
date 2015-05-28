@@ -14,11 +14,13 @@ block content
 	include ../inc/_script-sets.jade
 	script.
 		window.addEventListener("DOMContentLoaded", function(){
+			var canvas = document.getElementById("canvas");
+
 			/* カメラを用意
 			 * THREE.PerspectiveCamera(画角, 縦横比, クリッピング手前, クリッピング奥);
 			 * クリッピング手前からクリッピング奥までが描画される
 			*/
-			var width  = document.body.clientWidth,
+			var width  = canvas.clientWidth,
 					height = window.innerHeight,
 					fov    = 45,
 					aspect = width / height,
@@ -75,7 +77,6 @@ block content
 			renderer.setSize( width, height);
 
 			// DOMにcanvasを追加
-			var canvas = document.getElementById("canvas");
 			canvas.appendChild( renderer.domElement );
 
 

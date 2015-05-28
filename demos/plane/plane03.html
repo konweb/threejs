@@ -19,6 +19,7 @@
         <li><a href="../cube/cube01.html">cube01</a></li>
         <li><a href="../cube/cube02.html">cube02</a></li>
         <li><a href="../cube/cube03.html">cube03</a></li>
+        <li><a href="../cube/cube04.html">cube04</a></li>
         <li><a href="../line/line01.html">line01</a></li>
         <li><a href="../line/line02.html">line02</a></li>
         <li><a href="../line/line03.html">line03</a></li>
@@ -29,6 +30,8 @@
         <li><a href="../plane/plane02.html">plane02</a></li>
         <li><a href="../plane/plane03.html">plane03</a></li>
         <li><a href="../plane/plane04.html">plane04</a></li>
+        <li><a href="../plane/plane04_2.html">plane04_2</a></li>
+        <li><a href="../plane/plane04_3.html">plane04_3</a></li>
         <li><a href="../particle/particle01.html">particle01</a></li>
         <li><a href="../uniqe/uniqe01.html">uniqe01</a></li>
         <li><a href="../uniqe/uniqe02.html">uniqe02</a></li>
@@ -122,12 +125,6 @@
       
       
     </script><h3 id="-">メッシュ</h3>
-<h4 id="-">地面の作成</h4>
-<h5 id="planegeometry-width-height-widthsegments-heightsegments-">PlaneGeometry(width, height, widthSegments, heightSegments);</h5>
-<p>(docs - PlaneGeometry)[<a href="http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry">http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry</a>]  </p>
-<h4 id="-">画像の読み込み</h4>
-<h5 id="texture-image-mapping-wraps-wrapt-magfilter-minfilter-format-type-anisotropy-">Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy )</h5>
-<p>(docs - Texture)[<a href="http://threejs.org/docs/#Reference/Textures/Texture">http://threejs.org/docs/#Reference/Textures/Texture</a>]  </p>
 <pre><code>// ジオメトリーの作成
 var geometry,map1,material,mesh;
 geometry = new THREE.PlaneGeometry(200, 200, 64, 64);
@@ -138,15 +135,24 @@ material = new THREE.MeshBasicMaterial({map: map1});// マテリアルの作成
 mesh = new THREE.Mesh(geometry, material);
 mesh.rotation.x = Math.PI / -2;// x軸を90度回転
 scene.add(mesh);
-</code></pre><h4 id="-z-">地面のz方向の値を変更し凸凹にする</h4>
+</code></pre><p>地面の作成  </p>
+<blockquote>
+<p>PlaneGeometry(width, height, widthSegments, heightSegments)<br>(docs - PlaneGeometry)[<a href="http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry">http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry</a>]</p>
+</blockquote>
+<p>画像の読み込み  </p>
+<blockquote>
+<p>Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy )<br>(docs - Texture)[<a href="http://threejs.org/docs/#Reference/Textures/Texture">http://threejs.org/docs/#Reference/Textures/Texture</a>]</p>
+</blockquote>
+<h4 id="-z-">地面のz方向の値を変更し凸凹にする</h4>
 <pre><code>// ジオメトリの頂点分ループし、z方向の値を変更する
 for(var i = 0;i &lt; geometry.vertices.length;i++){
     geometry.vertices[i].z = Math.random() * 5 - 5;
 }
 </code></pre><hr>
 <h3 id="-">遠くをぼかす</h3>
-<h5 id="fogexp2-hex-density-">FogExp2( hex, density)</h5>
-<p><a href="http://threejs.org/docs/#Reference/Scenes/FogExp2">docs - FogExp2</a>  </p>
+<blockquote>
+<p>FogExp2( hex, density)<br><a href="http://threejs.org/docs/#Reference/Scenes/FogExp2">docs - FogExp2</a></p>
+</blockquote>
 <pre><code>scene.fog = new THREE.FogExp2( 0xABABAB, 0.008 );// ぼかす
 </code></pre><hr>
 <h3 id="-">アニメーション</h3>

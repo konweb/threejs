@@ -19,6 +19,7 @@
         <li><a href="../cube/cube01.html">cube01</a></li>
         <li><a href="../cube/cube02.html">cube02</a></li>
         <li><a href="../cube/cube03.html">cube03</a></li>
+        <li><a href="../cube/cube04.html">cube04</a></li>
         <li><a href="../line/line01.html">line01</a></li>
         <li><a href="../line/line02.html">line02</a></li>
         <li><a href="../line/line03.html">line03</a></li>
@@ -29,6 +30,8 @@
         <li><a href="../plane/plane02.html">plane02</a></li>
         <li><a href="../plane/plane03.html">plane03</a></li>
         <li><a href="../plane/plane04.html">plane04</a></li>
+        <li><a href="../plane/plane04_2.html">plane04_2</a></li>
+        <li><a href="../plane/plane04_3.html">plane04_3</a></li>
         <li><a href="../particle/particle01.html">particle01</a></li>
         <li><a href="../uniqe/uniqe01.html">uniqe01</a></li>
         <li><a href="../uniqe/uniqe02.html">uniqe02</a></li>
@@ -56,6 +59,8 @@
       
       	function init(){
       		var camera,scene,renderer;
+      		var canvas = document.getElementById("canvas");
+      
       		/*
       		 * シーンの作成
       		*/
@@ -64,7 +69,7 @@
       		/*
       		 * カメラの設定
       		*/
-      		var width = document.body.clientWidth,
+      		var width = canvas.clientWidth,
       				height = window.innerHeight,
       				fov = 45,
       				aspect = width / height,
@@ -99,16 +104,12 @@
       		*/
       		renderer = new THREE.WebGLRenderer();
       		renderer.setSize(width, height);
-      		var dom = document.getElementById("canvas");
-      		dom.appendChild(renderer.domElement);
+      		canvas.appendChild(renderer.domElement);
       		renderer.render(scene, camera);
       	}
       });
       
     </script><h3 id="-">メッシュ</h3>
-<h4 id="-">地面の作成</h4>
-<h5 id="planegeometry-width-height-widthsegments-heightsegments-">PlaneGeometry(width, height, widthSegments, heightSegments);</h5>
-<p>(docs - PlaneGeometry)[<a href="http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry">http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry</a>]  </p>
 <pre><code>// ジオメトリーの作成
 var geometry = new THREE.PlaneGeometry(100, 100);
 
@@ -116,13 +117,18 @@ var geometry = new THREE.PlaneGeometry(100, 100);
 var material = new THREE.MeshBasicMaterial({color: 0xffffff});
 var mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
-</code></pre><hr>
+</code></pre><p>地面の作成  </p>
+<blockquote>
+<p>PlaneGeometry(width, height, widthSegments, heightSegments)<br>(docs - PlaneGeometry)[<a href="http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry">http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry</a>]</p>
+</blockquote>
+<hr>
 <h3 id="all-codes">All Codes</h3>
 <pre><code>window.addEventListener(&quot;DOMContentLoaded&quot;, function(){
     init();
 
     function init(){
         var camera,scene,renderer;
+        var canvas = document.getElementById(&quot;canvas&quot;);
         /*
          * シーンの作成
         */
@@ -166,8 +172,7 @@ scene.add(mesh);
         */
         renderer = new THREE.WebGLRenderer();
         renderer.setSize(width, height);
-        var dom = document.getElementById(&quot;canvas&quot;);
-        dom.appendChild(renderer.domElement);
+        canvas.appendChild(renderer.domElement);
         renderer.render(scene, camera);
     }
 });

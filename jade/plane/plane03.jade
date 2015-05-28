@@ -85,14 +85,6 @@ block content
 
 	:markdown
 		### メッシュ
-		#### 地面の作成
-		##### PlaneGeometry(width, height, widthSegments, heightSegments);
-		(docs - PlaneGeometry)[http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry]  
-
-		#### 画像の読み込み
-		##### Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy )
-		(docs - Texture)[http://threejs.org/docs/#Reference/Textures/Texture]  
-
 		```
 		// ジオメトリーの作成
 		var geometry,map1,material,mesh;
@@ -106,6 +98,14 @@ block content
 		scene.add(mesh);
 		```
 
+		地面の作成  
+		> PlaneGeometry(width, height, widthSegments, heightSegments)  
+		> (docs - PlaneGeometry)[http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry]
+
+		画像の読み込み  
+		> Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy )  
+		> (docs - Texture)[http://threejs.org/docs/#Reference/Textures/Texture]
+
 		#### 地面のz方向の値を変更し凸凹にする
 		```
 		// ジオメトリの頂点分ループし、z方向の値を変更する
@@ -117,8 +117,8 @@ block content
 		---
 
 		### 遠くをぼかす
-		##### FogExp2( hex, density)
-		[docs - FogExp2](http://threejs.org/docs/#Reference/Scenes/FogExp2)  
+		> FogExp2( hex, density)  
+		> [docs - FogExp2](http://threejs.org/docs/#Reference/Scenes/FogExp2)
 
 		```
 		scene.fog = new THREE.FogExp2( 0xABABAB, 0.008 );// ぼかす

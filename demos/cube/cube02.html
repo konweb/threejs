@@ -19,6 +19,7 @@
         <li><a href="../cube/cube01.html">cube01</a></li>
         <li><a href="../cube/cube02.html">cube02</a></li>
         <li><a href="../cube/cube03.html">cube03</a></li>
+        <li><a href="../cube/cube04.html">cube04</a></li>
         <li><a href="../line/line01.html">line01</a></li>
         <li><a href="../line/line02.html">line02</a></li>
         <li><a href="../line/line03.html">line03</a></li>
@@ -29,6 +30,8 @@
         <li><a href="../plane/plane02.html">plane02</a></li>
         <li><a href="../plane/plane03.html">plane03</a></li>
         <li><a href="../plane/plane04.html">plane04</a></li>
+        <li><a href="../plane/plane04_2.html">plane04_2</a></li>
+        <li><a href="../plane/plane04_3.html">plane04_3</a></li>
         <li><a href="../particle/particle01.html">particle01</a></li>
         <li><a href="../uniqe/uniqe01.html">uniqe01</a></li>
         <li><a href="../uniqe/uniqe02.html">uniqe02</a></li>
@@ -42,6 +45,7 @@
         <li><a href="../demo/buffer-geometry.html">DEMO: buffer-geometry</a></li>
       </ul>
     </div>
+    <div id="canvas"></div>
     <script src="../src/three.min.js"></script>
     <script src="../src/ConvexGeometry.js"></script>
     <script src="../src/CanvasRenderer.js"></script>
@@ -58,11 +62,12 @@
       
       
       window.addEventListener("DOMContentLoaded", function(){
+      	var canvas = document.getElementById("canvas");
       	/* カメラを用意
       	 * THREE.PerspectiveCamera(画角, 縦横比, クリッピング手前, クリッピング奥);
       	 * クリッピング手前からクリッピング奥までが描画される
       	*/
-      	var width  = document.body.clientWidth,
+      	var width  = canvas.clientWidth,
       			height = window.innerHeight,
       			fov    = 80,
       			aspect = width / height,
@@ -139,7 +144,7 @@
       	renderer.setSize( width, height);
       
       	// DOMにcanvasを追加
-      	document.body.appendChild( renderer.domElement );
+      	canvas.appendChild( renderer.domElement );
       
       
       	/* レンダリング
@@ -152,14 +157,138 @@
       	/* アニメーション
       	 * 連続でレンダリングすることでアニメーションさせる
       	*/
-      	function rendering(){
+      	function animation(){
       		cubeMesh.rotation.x += 0.01;
       		cubeMesh.rotation.y += 0.01;
       		renderer.render(scene, camera);
-      		requestAnimationFrame(rendering);
+      		requestAnimationFrame(animation);
       	}
-      	rendering();
+      	animation();
       });
-    </script>
+      
+    </script><h3 id="-">基本実装</h3>
+<p>基本は<a href="../index.html">ベース</a>と同じ。</p>
+<hr>
+<h3 id="-">アニメーション</h3>
+<pre><code>animation();
+function animation(){
+    cubeMesh.rotation.x += 0.01;
+    cubeMesh.rotation.y += 0.01;
+    renderer.render(scene, camera);
+    requestAnimationFrame(animation);
+}
+</code></pre><h3 id="all-codes">All Codes</h3>
+<pre><code>var requestAnimationFrame = window.requestAnimationFrame ||
+                                                        window.mozRequestAnimationFrame ||
+                                                        window.webkitRequestAnimationFrame ||
+                                                        window.msRequestAnimationFrame;
+window.requestAnimationFrame = requestAnimationFrame;
+
+
+window.addEventListener(&quot;DOMContentLoaded&quot;, function(){
+    var canvas = document.getElementById(&quot;canvas&quot;);
+    /* カメラを用意
+     * THREE.PerspectiveCamera(画角, 縦横比, クリッピング手前, クリッピング奥);
+     * クリッピング手前からクリッピング奥までが描画される
+    */
+    var width  = canvas.clientWidth,
+            height = window.innerHeight,
+            fov    = 80,
+            aspect = width / height,
+            near   = 1,
+            far    = 1000,
+            camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+
+    // z方向に500ずらす
+    camera.position.set(50,50,500);
+
+
+    /* シーンの準備
+     * シーンは空間
+     * ここに様々なオブジェクトを詰め込んでいく
+    */
+    var scene = new THREE.Scene();
+
+
+    /*
+     * 軸の生成
+    */
+    var axis = new THREE.AxisHelper(1000);
+    axis.position.set(0, 0, 0);
+    scene.add(axis);
+
+
+    /* メッシュを作成
+     * メッシュはポリゴンの集合で作られたオブジェクト
+     * メッシュはジオメトリー(座標)とマテリアル(素材)で構成される
+    */
+
+    // ジオメトリーの作成
+    // THREE.CubeGeometry(横幅, 高さ, 奥行き, (横の分割数, 縦の分割数, 奥行きの分割数, 表面, sides));
+    var geometry = new THREE.CubeGeometry(200, 200,200);
+
+    // マテリアルの作成
+    // THREE.MeshLambertMaterial({object});
+    var material = new THREE.MeshLambertMaterial({color: 0x660000});
+
+    // メッシュの作成
+    var cubeMesh = new THREE.Mesh(geometry, material);
+
+
+    /* メッシュをシーンに追加
+     * 作成したメッシュをシーンに追加するには、シーン.add(メッシュ)を使う
+    */
+    scene.add(cubeMesh);
+
+
+    /* 光源の作成
+     * 環境光        THREE.AmbientLight
+     * 平行光源 (無限遠光源)    THREE.DirectionalLight
+     * 点光源        THREE.PointLight
+     * スポットライト    THREE.SpotLight
+    */
+    var directionalLight = new THREE.DirectionalLight(0xffffff, 3);
+    directionalLight.position.z = 3;
+
+
+    /*
+     * 光源をシーンに追加
+     * メッシュの時と同様に、シーン.add(光源)で追加する
+    */
+    scene.add(directionalLight);
+
+
+    /* レンダラーを用意
+     * 実際に描画を行うための処理
+    */
+    var renderer = new THREE.WebGLRenderer();
+
+    // 大きさの定義
+    // レンダラー.setSize(横幅, 高さ)で大きさを定義
+    renderer.setSize( width, height);
+
+    // DOMにcanvasを追加
+    canvas.appendChild( renderer.domElement );
+
+
+    /* レンダリング
+     * 描画処理
+     * レンダラー.render(シーン, カメラ)
+    */
+    renderer.render(scene, camera);
+
+
+    /* アニメーション
+     * 連続でレンダリングすることでアニメーションさせる
+    */
+    function animation(){
+        cubeMesh.rotation.x += 0.01;
+        cubeMesh.rotation.y += 0.01;
+        renderer.render(scene, camera);
+        requestAnimationFrame(animation);
+    }
+    animation();
+});
+</code></pre>
   </div>
 </body>

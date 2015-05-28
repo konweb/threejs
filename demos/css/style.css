@@ -12,7 +12,8 @@
   width: 100%;
   height: 0;
   position: fixed;
-  transition: 0.5s;
+  -webkit-transition: 0.5s;
+          transition: 0.5s;
 }
 .menu-bg.is-active {
   height: 100%;
@@ -23,7 +24,8 @@
   position: fixed;
   top: 0;
   left: -220px;
-  transition: all 0.3s ease 0.3s;
+  -webkit-transition: all 0.3s ease 0.3s;
+          transition: all 0.3s ease 0.3s;
 }
 .nav.is-active {
   left: 0;
@@ -55,12 +57,15 @@
   margin: 0;
   padding: 0;
   padding-top: 30px;
+  padding-bottom: 30px;
+  overflow: scroll;
 }
 .nav a {
   display: block;
   color: rgba(255, 255, 255, 0.5);
   padding: 7px 15px;
-  transition: 0.2s;
+  -webkit-transition: 0.2s;
+          transition: 0.2s;
 }
 .nav a:hover {
   background: #512e90;

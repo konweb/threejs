@@ -18,6 +18,8 @@ block content
 
 			function init(){
 				var camera,scene,renderer;
+				var canvas = document.getElementById("canvas");
+
 				/*
 				 * シーンの作成
 				*/
@@ -26,7 +28,7 @@ block content
 				/*
 				 * カメラの設定
 				*/
-				var width = document.body.clientWidth,
+				var width = canvas.clientWidth,
 						height = window.innerHeight,
 						fov = 45,
 						aspect = width / height,
@@ -61,18 +63,13 @@ block content
 				*/
 				renderer = new THREE.WebGLRenderer();
 				renderer.setSize(width, height);
-				var dom = document.getElementById("canvas");
-				dom.appendChild(renderer.domElement);
+				canvas.appendChild(renderer.domElement);
 				renderer.render(scene, camera);
 			}
 		});
 
 	:markdown
 		### メッシュ
-		#### 地面の作成
-		##### PlaneGeometry(width, height, widthSegments, heightSegments);
-		(docs - PlaneGeometry)[http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry]  
-
 		```
 		// ジオメトリーの作成
 		var geometry = new THREE.PlaneGeometry(100, 100);
@@ -83,6 +80,10 @@ block content
 		scene.add(mesh);
 		```
 
+		地面の作成  
+		> PlaneGeometry(width, height, widthSegments, heightSegments)  
+		> (docs - PlaneGeometry)[http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry]
+
 		---
 
 		### All Codes
@@ -92,6 +93,7 @@ block content
 
 			function init(){
 				var camera,scene,renderer;
+				var canvas = document.getElementById("canvas");
 				/*
 				 * シーンの作成
 				*/
@@ -135,8 +137,7 @@ block content
 				*/
 				renderer = new THREE.WebGLRenderer();
 				renderer.setSize(width, height);
-				var dom = document.getElementById("canvas");
-				dom.appendChild(renderer.domElement);
+				canvas.appendChild(renderer.domElement);
 				renderer.render(scene, camera);
 			}
 		});
