@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>Threejs Plane Sample05</title>
+    <link rel="stylesheet" href="../css/marx.min.css">
+    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+  </head>
+</html>
+<body>
+  <div class="menu-bg"></div>
+  <div class="l-wrapper">
+    <h1>ゆらゆらさせる2</h1>
+    <div class="nav">
+      <div class="menu-icon"></div>
+      <ul>
+        <li><a href="../index.html">HOME</a></li>
+        <li><a href="../cube/cube01.html">cube01</a></li>
+        <li><a href="../cube/cube02.html">cube02</a></li>
+        <li><a href="../cube/cube03.html">cube03</a></li>
+        <li><a href="../line/line01.html">line01</a></li>
+        <li><a href="../line/line02.html">line02</a></li>
+        <li><a href="../line/line03.html">line03</a></li>
+        <li><a href="../line/line04.html">line04</a></li>
+        <li><a href="../circle/circle01.html">circle01</a></li>
+        <li><a href="../circle/circle02.html">circle02</a></li>
+        <li><a href="../plane/plane01.html">plane01</a></li>
+        <li><a href="../plane/plane02.html">plane02</a></li>
+        <li><a href="../plane/plane03.html">plane03</a></li>
+        <li><a href="../plane/plane04.html">plane04</a></li>
+        <li><a href="../plane/plane05.html">plane05</a></li>
+        <li><a href="../particle/particle01.html">particle01</a></li>
+        <li><a href="../uniqe/uniqe01.html">uniqe01</a></li>
+        <li><a href="../uniqe/uniqe02.html">uniqe02</a></li>
+        <li><a href="../uniqe/uniqe03.html">uniqe03</a></li>
+        <li><a href="../physics/physics01.html">physics01</a></li>
+        <li><a href="../physics/physics02.html">physics02</a></li>
+        <li><a href="../other/other01.html">other01</a></li>
+        <li><a href="../other/other02.html">other02</a></li>
+        <li><a href="../helper/helper01.html">helper01</a></li>
+        <li><a href="../demo/circle2d-animation.html">DEMO: circle2d-animation</a></li>
+        <li><a href="../demo/buffer-geometry.html">DEMO: buffer-geometry</a></li>
+      </ul>
+    </div>
+    <div id="canvas"></div>
+    <script src="../src/three.min.js"></script>
+    <script src="../src/ConvexGeometry.js"></script>
+    <script src="../src/CanvasRenderer.js"></script>
+    <script src="../src/Projector.js"></script>
+    <script src="../src/cannon.min.js"></script>
+    <script src="../src/jquery.min.js"></script>
+    <script src="../src/common.js"></script>
+    <script>
+      window.addEventListener("DOMContentLoaded", function(){
+      	var requestAnimationFrame = window.requestAnimationFrame ||
+      															window.mozRequestAnimationFrame ||
+      															window.webkitRequestAnimationFrame ||
+      															window.msRequestAnimationFrame;
+      	window.requestAnimationFrame = requestAnimationFrame;
+      
+      	var camera,scene,geometry,material,mesh,renderer,texture;
+      	var canvas = document.getElementById("canvas"),
+      			width = canvas.clientWidth, height = window.innerHeight,
+      			texture;
+      
+      	init();
+      	animation();
+      
+      	function init(){
+      		scene = new THREE.Scene();
+      
+      		camera = new THREE.PerspectiveCamera(45, width/height, 1, 1000);
+      		camera.position.set(0, 10, 200);
+      		camera.lookAt(new THREE.Vector3(0, 0, 0));
+      
+      		texture = THREE.ImageUtils.loadTexture("plane02.png");
+      		geometry = new THREE.PlaneGeometry(100, 100, 64, 64);
+      		material = new THREE.MeshBasicMaterial({ map: texture });
+      		mesh = new THREE.Mesh(geometry, material);
+      		scene.add(mesh);
+      
+      		renderer = new THREE.WebGLRenderer();
+      		renderer.setSize(width, height);
+      		renderer.setClearColor(0xABABAB);
+      		canvas.appendChild(renderer.domElement);
+      	}
+      
+      	var startData = new Date();
+      	function animation(){
+      		requestAnimationFrame(animation);
+      
+      		var time = (new Date() - startData)/1000;
+      		mesh.geometry.verticesNeedUpdate = true;
+      		for (var i = 0;i < 64+1;i++) {
+      			for (var j = 0;j < 64+1;j++) {
+      				var index = j * (64 + 1) + i % (64 + 1);
+      				mesh.geometry.vertices[i].z = 2 * Math.sin( -i/2 + time*10 );
+      			}
+      		}
+      		renderer.render(scene, camera);
+      	}
+      });
+      
+      
+    </script><h3 id="-">メッシュ</h3>
+<h4 id="-">地面の作成</h4>
+<h5 id="planegeometry-width-height-widthsegments-heightsegments-">PlaneGeometry(width, height, widthSegments, heightSegments);</h5>
+<p>(docs - PlaneGeometry)[<a href="http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry">http://threejs.org/docs/#Reference/Extras.Geometries/PlaneGeometry</a>]  </p>
+<h4 id="-">画像の読み込み</h4>
+<h5 id="texture-image-mapping-wraps-wrapt-magfilter-minfilter-format-type-anisotropy-">Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy )</h5>
+<p>(docs - Texture)[<a href="http://threejs.org/docs/#Reference/Textures/Texture">http://threejs.org/docs/#Reference/Textures/Texture</a>]  </p>
+<pre><code>// ジオメトリーの作成
+var geometry,map1,material,mesh;
+geometry = new THREE.PlaneGeometry(200, 200, 64, 64);
+
+// 画像を読み込み 画像が読み込まれる前に描画されている？ため上手く読み込めない。renderer.render()を走らせる
+map1 = THREE.ImageUtils.loadTexture(&quot;plane02.png&quot;, {}, function() {renderer.render(scene, camera);});
+material = new THREE.MeshBasicMaterial({map: map1});// マテリアルの作成
+mesh = new THREE.Mesh(geometry, material);
+mesh.rotation.x = Math.PI / -2;// x軸を90度回転
+scene.add(mesh);
+</code></pre><h4 id="-z-">地面のz方向の値を変更し凸凹にする</h4>
+<pre><code>// ジオメトリの頂点分ループし、z方向の値を変更する
+for(var i = 0;i &lt; geometry.vertices.length;i++){
+    geometry.vertices[i].z = Math.random() * 5 - 5;
+}
+</code></pre><hr>
+<h3 id="-">遠くをぼかす</h3>
+<h5 id="fogexp2-hex-density-">FogExp2( hex, density)</h5>
+<p><a href="http://threejs.org/docs/#Reference/Scenes/FogExp2">docs - FogExp2</a>  </p>
+<pre><code>scene.fog = new THREE.FogExp2( 0xABABAB, 0.008 );// ぼかす
+</code></pre><hr>
+<h3 id="-">アニメーション</h3>
+<pre><code>animation();
+function animation(){
+    requestAnimationFrame(animation);
+    var timer = Date.now();
+    camera.position.x = 50 * Math.sin( timer / 100 * Math.PI / 360 );
+    camera.position.z = 50 * Math.cos( timer / 100 * Math.PI / 360 );
+    camera.lookAt( scene.position );
+    renderer.render(scene, camera);
+}
+</code></pre><hr>
+<h3 id="all-codes">All Codes</h3>
+<pre><code>window.addEventListener(&quot;DOMContentLoaded&quot;, function(){
+    var scene,camera,geometry,texture,material,mesh,renderer;
+
+    init();
+    animation();
+
+    function init(){
+        var canvas = document.getElementById(&quot;canvas&quot;);
+        var width = canvas.clientWidth, height = window.innerHeight;
+
+        /*
+         * シーンの作成
+        */
+        scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0xABABAB, 0.008);
+
+        /*
+         * カメラの設定
+        */
+        camera = new THREE.PerspectiveCamera(45, width/height, 1, 1000);
+        camera.position.set(0, 10, 100);
+        camera.lookAt(new THREE.Vector3(0,0,0));
+
+        /*
+         * メッシュの作成
+        */
+        // ジオメトリーの作成
+        geometry = new THREE.PlaneGeometry(200, 200, 16, 16);
+
+        // ジオメトリの頂点分ループし、z方向の値を変更する
+        for(var i = 0;i &lt; geometry.vertices.length;i++){
+            geometry.vertices[i].z = Math.random() * 5 - 5;
+        }
+
+        // 画像の読み込み
+        texture = THREE.ImageUtils.loadTexture(&quot;plane02.png&quot;, {}, function(){renderer.render(scene, camera);});
+
+        // マテリアルの作成
+        material = new THREE.MeshBasicMaterial({map: texture});
+        mesh = new THREE.Mesh(geometry, material);
+        mesh.rotation.x = Math.PI / -2;
+        scene.add(mesh);
+
+        /*
+         * レンダラーの作成
+        */
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(width, height);
+        renderer.setClearColor(0xABABAB);
+        canvas.appendChild(renderer.domElement);
+        renderer.render(scene, camera);
+    }
+
+    function animation(){
+        requestAnimationFrame(animation);
+        var timer = Date.now();
+        camera.position.x = 50 * Math.sin( timer / 100 * Math.PI / 360 );
+        camera.position.z = 50 * Math.cos( timer / 100 * Math.PI / 360 );
+        camera.lookAt( scene.position );
+        renderer.render(scene, camera);
+    }
+});
+</code></pre>
+  </div>
+</body>
