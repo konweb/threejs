@@ -2,10 +2,10 @@ include ../inc/_nav-list.jade
 extends ../inc/_head.jade
 
 block title
-	title Threejs Mouse Sample02
+	title Threejs Mouse Sample03
 
 block content
-	h1 TrackballControls.jsを使ってマウスコントロール
+	h1 OrbitControls.jsを使ってマウスコントロール
 
 	mixin list(1)
 
@@ -20,7 +20,7 @@ block content
 																	window.msRequestAnimationFrame;
 			window.requestAnimationFrame = requestAnimationFrame;
 
-			var camera,controls,scene,cubeMesh,renderer;
+			var camera,controls,scene,cubeMesh,renderer,controls;
 			var canvas = document.getElementById("canvas");
 
 			init();
@@ -35,12 +35,11 @@ block content
 				camera = new THREE.PerspectiveCamera(45, width/height, 1, 2000);
 				camera.position.set(0, 0, 100);
 
-				// マウスコントロール
-				controls = new THREE.TrackballControls( camera,canvas );
-				controls.addEventListener( 'change', render );
-
 				// シーンの準備
 				scene = new THREE.Scene();
+
+				controls = new THREE.OrbitControls(camera, canvas);
+				controls.addEventListener("change", render);
 
 				// ジオメトリーの作成
 				geometry = new THREE.BoxGeometry(10, 10, 10);
@@ -79,25 +78,40 @@ block content
 
 	:markdown
 		## 実装
-		基本は[ベース](../index.html)と同じ
+		基本は[TrackballControls.js](./mouse02.html)と同じ
 
 		---
 
 		### マウスコントロール
 		```
 		// マウスコントロール
-		controls = new THREE.TrackballControls( camera,canvas );
-		controls.addEventListener( 'change', render );
+		controls = new THREE.OrbitControls(camera, canvas);
+		controls.addEventListener("change", render);
 
 		function render(){
 			renderer.render(scene, camera);
 		}
 		```
 
-		> THREE.TrackballControls(object, domElement)  
-		> [Github - TrackballControls.js](https://github.com/mrdoob/three.js/blob/master/examples/js/controls/TrackballControls.js)
+		> THREE.OrbitControls(object, domElement)  
+		> [Github - OrbitControls.js](https://github.com/mrdoob/three.js/blob/master/examples/js/controls/OrbitControls.js)
 
 		domElementの方にレンダリングする要素を指定することで、その領域だけでマウスコントロールを実行することができる。
+
+		| Property | Type | Desc |
+		|:-----------|:------------|:------------|
+		| userZoom | Boolean | ズーム操作 |
+		| userZoomSpeed | Number | ズーム速度 |
+		| userRotate | Boolean | 回転操作 |
+		| userRotateSpeed | Number | 回転速度|
+		| userPan | Boolean | パン操作 |
+		| userPanSpeed | Number | パン速度 |
+		| autoRotate | Boolean | 自動回転 |
+		| autoRotateSpeed | Number | 自動回転速度 |
+		| minPolarAngle | Number | 最小角度 |
+		| maxPolarAngle | Number | 最大角度 |
+		| minDistance | Number | 近づける距離の最小値 |
+		| maxDistance | Infinity | 遠ざかれる距離の最大値 |
 
 		---
 
@@ -121,7 +135,7 @@ block content
 																	window.msRequestAnimationFrame;
 			window.requestAnimationFrame = requestAnimationFrame;
 
-			var camera,controls,scene,cubeMesh,renderer;
+			var camera,controls,scene,cubeMesh,renderer,controls;
 			var canvas = document.getElementById("canvas");
 
 			init();
@@ -136,12 +150,11 @@ block content
 				camera = new THREE.PerspectiveCamera(45, width/height, 1, 2000);
 				camera.position.set(0, 0, 100);
 
-				// マウスコントロール
-				controls = new THREE.TrackballControls( camera,canvas );
-				controls.addEventListener( 'change', render );
-
 				// シーンの準備
 				scene = new THREE.Scene();
+
+				controls = new THREE.OrbitControls(camera, canvas);
+				controls.addEventListener("change", render);
 
 				// ジオメトリーの作成
 				geometry = new THREE.BoxGeometry(10, 10, 10);

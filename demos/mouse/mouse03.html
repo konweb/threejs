@@ -2,7 +2,7 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8">
-    <title>Threejs Mouse Sample02</title>
+    <title>Threejs Mouse Sample03</title>
     <link rel="stylesheet" href="../css/marx.min.css">
     <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="../css/style.css">
@@ -11,7 +11,7 @@
 <body>
   <div class="menu-bg"></div>
   <div class="l-wrapper">
-    <h1>TrackballControls.jsを使ってマウスコントロール</h1>
+    <h1>OrbitControls.jsを使ってマウスコントロール</h1>
     <div class="nav">
       <div class="menu-icon"></div>
       <ul>
@@ -67,7 +67,7 @@
       															window.msRequestAnimationFrame;
       	window.requestAnimationFrame = requestAnimationFrame;
       
-      	var camera,controls,scene,cubeMesh,renderer;
+      	var camera,controls,scene,cubeMesh,renderer,controls;
       	var canvas = document.getElementById("canvas");
       
       	init();
@@ -82,12 +82,11 @@
       		camera = new THREE.PerspectiveCamera(45, width/height, 1, 2000);
       		camera.position.set(0, 0, 100);
       
-      		// マウスコントロール
-      		controls = new THREE.TrackballControls( camera,canvas );
-      		controls.addEventListener( 'change', render );
-      
       		// シーンの準備
       		scene = new THREE.Scene();
+      
+      		controls = new THREE.OrbitControls(camera, canvas);
+      		controls.addEventListener("change", render);
       
       		// ジオメトリーの作成
       		geometry = new THREE.BoxGeometry(10, 10, 10);
@@ -125,20 +124,91 @@
       });
       
     </script><h2 id="-">実装</h2>
-<p>基本は<a href="../index.html">ベース</a>と同じ</p>
+<p>基本は<a href="./mouse02.html">TrackballControls.js</a>と同じ</p>
 <hr>
 <h3 id="-">マウスコントロール</h3>
 <pre><code>// マウスコントロール
-controls = new THREE.TrackballControls( camera,canvas );
-controls.addEventListener( &#39;change&#39;, render );
+controls = new THREE.OrbitControls(camera, canvas);
+controls.addEventListener(&quot;change&quot;, render);
 
 function render(){
     renderer.render(scene, camera);
 }
 </code></pre><blockquote>
-<p>THREE.TrackballControls(object, domElement)<br><a href="https://github.com/mrdoob/three.js/blob/master/examples/js/controls/TrackballControls.js">Github - TrackballControls.js</a></p>
+<p>THREE.OrbitControls(object, domElement)<br><a href="https://github.com/mrdoob/three.js/blob/master/examples/js/controls/OrbitControls.js">Github - OrbitControls.js</a></p>
 </blockquote>
 <p>domElementの方にレンダリングする要素を指定することで、その領域だけでマウスコントロールを実行することができる。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Property</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Desc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">userZoom</td>
+<td style="text-align:left">Boolean</td>
+<td style="text-align:left">ズーム操作</td>
+</tr>
+<tr>
+<td style="text-align:left">userZoomSpeed</td>
+<td style="text-align:left">Number</td>
+<td style="text-align:left">ズーム速度</td>
+</tr>
+<tr>
+<td style="text-align:left">userRotate</td>
+<td style="text-align:left">Boolean</td>
+<td style="text-align:left">回転操作</td>
+</tr>
+<tr>
+<td style="text-align:left">userRotateSpeed</td>
+<td style="text-align:left">Number</td>
+<td style="text-align:left">回転速度</td>
+</tr>
+<tr>
+<td style="text-align:left">userPan</td>
+<td style="text-align:left">Boolean</td>
+<td style="text-align:left">パン操作</td>
+</tr>
+<tr>
+<td style="text-align:left">userPanSpeed</td>
+<td style="text-align:left">Number</td>
+<td style="text-align:left">パン速度</td>
+</tr>
+<tr>
+<td style="text-align:left">autoRotate</td>
+<td style="text-align:left">Boolean</td>
+<td style="text-align:left">自動回転</td>
+</tr>
+<tr>
+<td style="text-align:left">autoRotateSpeed</td>
+<td style="text-align:left">Number</td>
+<td style="text-align:left">自動回転速度</td>
+</tr>
+<tr>
+<td style="text-align:left">minPolarAngle</td>
+<td style="text-align:left">Number</td>
+<td style="text-align:left">最小角度</td>
+</tr>
+<tr>
+<td style="text-align:left">maxPolarAngle</td>
+<td style="text-align:left">Number</td>
+<td style="text-align:left">最大角度</td>
+</tr>
+<tr>
+<td style="text-align:left">minDistance</td>
+<td style="text-align:left">Number</td>
+<td style="text-align:left">近づける距離の最小値</td>
+</tr>
+<tr>
+<td style="text-align:left">maxDistance</td>
+<td style="text-align:left">Infinity</td>
+<td style="text-align:left">遠ざかれる距離の最大値</td>
+</tr>
+</tbody>
+</table>
 <hr>
 <h3 id="-">アニメーション</h3>
 <pre><code>animate();
@@ -155,7 +225,7 @@ function animate(){
                                                             window.msRequestAnimationFrame;
     window.requestAnimationFrame = requestAnimationFrame;
 
-    var camera,controls,scene,cubeMesh,renderer;
+    var camera,controls,scene,cubeMesh,renderer,controls;
     var canvas = document.getElementById(&quot;canvas&quot;);
 
     init();
@@ -170,12 +240,11 @@ function animate(){
         camera = new THREE.PerspectiveCamera(45, width/height, 1, 2000);
         camera.position.set(0, 0, 100);
 
-        // マウスコントロール
-        controls = new THREE.TrackballControls( camera,canvas );
-        controls.addEventListener( &#39;change&#39;, render );
-
         // シーンの準備
         scene = new THREE.Scene();
+
+        controls = new THREE.OrbitControls(camera, canvas);
+        controls.addEventListener(&quot;change&quot;, render);
 
         // ジオメトリーの作成
         geometry = new THREE.BoxGeometry(10, 10, 10);

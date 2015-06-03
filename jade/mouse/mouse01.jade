@@ -100,7 +100,7 @@ block content
 				if(!rotationFlag) return;// 回転フラグがtrueでなければ停止
 				var rotationX,rotationY;
 				rotationX = posi.x - e.pageX;// x軸の回転値
-				rotationY = e.pageY - posi.y;// y軸の回転値
+				rotationY = posi.y - e.pageY;// y軸の回転値
 				cubeMesh.rotation.x += rotationX * 0.0005;
 				cubeMesh.rotation.y += rotationY * 0.0005;
 				render();// レンダリング
@@ -142,7 +142,7 @@ block content
 		renderer.domElement.addEventListener("mousemove", function(e){
 			if(!rotationFlag) return;// 回転フラグがtrueでなければ停止
 			var rotationX,rotationY;
-			rotationX = posi.x - e.pageX;// x軸の回転値
+			rotationX = e.pageX - posi.x;// x軸の回転値
 			rotationY = e.pageY - posi.y;// y軸の回転値
 			cubeMesh.rotation.x += rotationX * 0.0005;
 			cubeMesh.rotation.y += rotationY * 0.0005;
