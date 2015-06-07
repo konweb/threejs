@@ -2,35 +2,18 @@ include ./../inc/_nav-list.jade
 extends ../inc/_head.jade
 
 block title
-  title Threejs Cannonjs Sample
+  title Threejs Cannonjs Sample01
 
 block content
   h1 cannon.js
 
   mixin list(1)
 
-  :markdown
-    ## 使い方 Sample
-    ### 初期設定
-    #### CANNON.jsの世界を生成
-    ```
-    world = new CANNON.World();
-    ```
-
-    #### 重力の設定
-    ```
-    world.gravity.set(0,0,0);// 重力
-    world.broadphase = new CANNON.NaiveBroadphase();// 衝突している可能性のある剛体を見つける
-    world.solver.iterations = 10;// 反復計算回数
-    ```
-
-    > __剛体__  
-    > 剛体はどんな力を受けても形や体積を変えない。剛体の運動は，重心に全質量が集中した仮想的質点が行う重心運動と，重心のまわりの回転運動とに分離して論じることができる。  
-    > [コトバンク > 剛体とは](https://kotobank.jp/word/%E5%89%9B%E4%BD%93-62662)
-
+  div#canvas
 
   include ../inc/_script-sets.jade
   script.
+    var canvas = document.getElementById("canvas");
     var world, mass, body, shape, timeStep=1/60,
        camera, scene, renderer, geometry, material, mesh;
     initThree();
@@ -45,19 +28,16 @@ block content
         world.solver.iterations = 10;// 反復計算回数
 
         // 対象となる剛体の生成
-        shape = new CANNON.Box(new CANNON.Vec3(1,1,1));
-        mass = 1;
-        body = new CANNON.Body({
-          mass: 1
-        });
-        body.addShape(shape);
-        body.angularVelocity.set(0,10,0);
-        body.angularDamping = 0.5;
-        world.addBody(body);
+        shape = new CANNON.Box(new CANNON.Vec3(1,1,1));// キューブの生成
+        body = new CANNON.Body({mass: 1});// 質量1の剛体を生成
+        body.addShape(shape);// 
+        body.angularVelocity.set(0,10,0);// 剛体の回転
+        body.angularDamping = 0.5;// 減衰率
+        world.addBody(body);// worldに追加
     }
     function initThree() {
         scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera( 75, document.body.clientWidth / window.innerHeight, 1, 100 );
+        camera = new THREE.PerspectiveCamera( 75, canvas.clientWidth / window.innerHeight, 1, 100 );
         camera.position.z = 5;
         scene.add( camera );
         geometry = new THREE.BoxGeometry( 1, 1, 1 );
@@ -65,8 +45,8 @@ block content
         mesh = new THREE.Mesh( geometry, material );
         scene.add( mesh );
         renderer = new THREE.WebGLRenderer();
-        renderer.setSize( document.body.clientWidth, window.innerHeight );
-        document.body.appendChild( renderer.domElement );
+        renderer.setSize( canvas.clientWidth, window.innerHeight );
+        canvas.appendChild( renderer.domElement );
     }
     function animate() {
         requestAnimationFrame( animate );
@@ -83,3 +63,135 @@ block content
     function render() {
         renderer.render( scene, camera );
     }
+
+  :markdown
+    ## 実装
+    ### CANNON.jsの世界を生成
+    ```
+    world = new CANNON.World();
+    ```
+
+    ---
+
+    ### 重力の設定
+    ```
+    world.gravity.set(0,0,0);// 重力
+    world.broadphase = new CANNON.NaiveBroadphase();// 衝突している可能性のある剛体を見つける
+    world.solver.iterations = 10;// 反復計算回数
+    ```
+
+    > __剛体__  
+    > 剛体はどんな力を受けても形や体積を変えない。剛体の運動は，重心に全質量が集中した仮想的質点が行う重心運動と，重心のまわりの回転運動とに分離して論じることができる。  
+    > [コトバンク > 剛体とは](https://kotobank.jp/word/%E5%89%9B%E4%BD%93-62662)
+
+    ---
+
+    ### 対象となる剛体の生成
+    ```
+    shape = new CANNON.Box(new CANNON.Vec3(1,1,1));// キューブの生成
+    body = new CANNON.Body({mass: 1});// 質量1の剛体を生成
+    body.addShape(shape);// 
+    body.angularVelocity.set(0,10,0);// 剛体の回転
+    body.angularDamping = 0.5;// 減衰率
+    world.addBody(body);// worldに追加
+    ```
+
+    > __減衰率__  
+    > 減衰のある自由振動系における振動振幅が、1秒間に減少する度合いを示すものである。質量m、減衰係数cを有する振動系の自由振動では、振幅は1秒間にe-c/2m減少し、c/2mを減衰率という。減衰係数が大きいと振幅減少も大きく振動が速く減少し、質量が大きいと振幅減少は小さく、振動が減少しにくいことを示している。  
+    > [weblio > 減衰率](http://www.weblio.jp/content/%E6%B8%9B%E8%A1%B0%E7%8E%87)
+
+    --- 
+
+    ### threejsでキューブを生成
+    CANNONjsのworldに追加した剛体よ同じものを、threejsで生成する。
+    ```
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera( 75, canvas.clientWidth / window.innerHeight, 1, 100 );
+    camera.position.z = 5;
+    scene.add( camera );
+    geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+    mesh = new THREE.Mesh( geometry, material );
+    scene.add( mesh );
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize( canvas.clientWidth, window.innerHeight );
+    canvas.appendChild( renderer.domElement );
+    ```
+
+    ---
+
+    ### worldの更新
+    アニメーションでworldを更新する。
+    ```
+    function animate() {
+        requestAnimationFrame( animate );
+        updatePhysics();
+        render();
+    }
+    function updatePhysics() {
+        // Step the physics world
+        world.step(timeStep);
+        // Copy coordinates from Cannon.js to Three.js
+        mesh.position.copy(body.position);
+        mesh.quaternion.copy(body.quaternion);
+    }
+    function render() {
+        renderer.render( scene, camera );
+    }
+    ```
+
+    ---
+
+    ### All Codes
+    ```
+    var canvas = document.getElementById("canvas");
+    var world, mass, body, shape, timeStep=1/60,
+       camera, scene, renderer, geometry, material, mesh;
+    initThree();
+    initCannon();
+    animate();
+    function initCannon() {
+        // CANNON.jsの世界を生成
+        world = new CANNON.World();
+
+        world.gravity.set(0,0,0);// 重力の設定
+        world.broadphase = new CANNON.NaiveBroadphase();// 衝突している可能性のある物体を見つける
+        world.solver.iterations = 10;// 反復計算回数
+
+        // 対象となる剛体の生成
+        shape = new CANNON.Box(new CANNON.Vec3(1,1,1));// キューブの生成
+        body = new CANNON.Body({mass: 1});// 質量1の剛体を生成
+        body.addShape(shape);// 
+        body.angularVelocity.set(0,10,0);// 剛体の回転
+        body.angularDamping = 0.5;// 減衰率
+        world.addBody(body);// worldに追加
+    }
+    function initThree() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera( 75, canvas.clientWidth / window.innerHeight, 1, 100 );
+        camera.position.z = 5;
+        scene.add( camera );
+        geometry = new THREE.BoxGeometry( 1, 1, 1 );
+        material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+        mesh = new THREE.Mesh( geometry, material );
+        scene.add( mesh );
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize( canvas.clientWidth, window.innerHeight );
+        canvas.appendChild( renderer.domElement );
+    }
+    function animate() {
+        requestAnimationFrame( animate );
+        updatePhysics();
+        render();
+    }
+    function updatePhysics() {
+        // Step the physics world
+        world.step(timeStep);
+        // Copy coordinates from Cannon.js to Three.js
+        mesh.position.copy(body.position);
+        mesh.quaternion.copy(body.quaternion);
+    }
+    function render() {
+        renderer.render( scene, camera );
+    }
+    ```

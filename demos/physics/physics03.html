@@ -2,7 +2,7 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8">
-    <title>Threejs Cannonjs Sample02</title>
+    <title>Threejs Cannonjs Sample03</title>
     <link rel="stylesheet" href="../css/marx.min.css">
     <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="../css/style.css">
@@ -68,13 +68,21 @@
       window.requestAnimationFrame = requestAnimationFrame;
       
       var canvas = document.getElementById("canvas");
-      var world,cubePhy,N = 40,
+      var world,cubePhy,N = 40,cubeArr = [],countPhy = 0,cubeSize = 1,
       		camera,scene,renderer,geometry,material,mesh,cube,
       		width, height;
       
       initCannon();
       init();
       animate();
+      cubeInterval = setInterval(function(){
+      	cubeArr.push({
+      		phy: createPhyCube(),
+      		cube: createCube()
+      	});
+      	countPhy++;
+      	if(countPhy === 200) clearInterval(cubeInterval);
+      },20);
       
       function initCannon(){
       	/*
@@ -94,16 +102,23 @@
       	ground.addShape(plane);// bodyに追加
       	ground.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);// x軸から90度回転
       	world.add(ground);// worldに剛体を追加
+      }
+      
+      function createPhyCube(){
       	/*
       	 * 物理演算対象の剛体[キューブ]を生成
       	*/
-      	shape = new CANNON.Box(new CANNON.Vec3(1, 1, 1));// キューブの生成
+      	shape = new CANNON.Box(new CANNON.Vec3(cubeSize/2, cubeSize/2, cubeSize/2));// キューブの生成
       	cubePhy = new CANNON.Body({mass: 1});// 質量1の剛体を生成
       	cubePhy.addShape(shape);// bodyに追加
-      	cubePhy.position.y = 10;
-      	cubePhy.angularVelocity.set(10, 10, 10);
+      	time = Date.now() * 1000;
+      	cubePhy.position.x = 1 * Math.sin(countPhy * (Math.PI*2) / (width/10));
+      	cubePhy.position.y = ((countPhy+1) + cubeSize) + 10;
+      	//- cubePhy.angularVelocity.set(3, 3, 3);
       	world.add(cubePhy);
+      	return cubePhy;
       }
+      
       
       function init(){
       	/*
@@ -115,17 +130,12 @@
       	/*
       	 * カメラの設定
       	*/
-      	var fov,aspect,near,fav;
-      	width  = window.innerWidth;
+      	width  = canvas.clientWidth;
       	height = window.innerHeight;
-      	fov    = 30;
-      	aspect = width / height;
-      	near   = 1;
-      	fav    = 10000;
       
       	//- camera = new THREE.PerspectiveCamera(fov, aspect, near, fav);
-      	camera = new THREE.PerspectiveCamera(30, canvas.clientWidth / window.innerHeight, 1, 10000);
-      	camera.position.set(Math.cos(Math.PI / 5) * 30, 5, Math.sin(Math.PI / 5) * 40);
+      	camera = new THREE.PerspectiveCamera(30, width / height, 1, 10000);
+      	camera.position.set(Math.cos(Math.PI / 5) * 30, 5, Math.sin(Math.PI / 5) * 10);
       	camera.lookAt(new THREE.Vector3(0, 0, 0));
       	scene.add(camera);
       
@@ -152,29 +162,17 @@
       	 * 地面の作成
       	*/
       	var plane,planeGeo,planeMaterial;
-      	planeGeo = new THREE.PlaneGeometry(300,300);
+      	planeGeo = new THREE.PlaneGeometry(300,300,1,1);
       	planeMaterial = new THREE.MeshPhongMaterial({
       		color: 0x000000,
       		specular: 0xffffff,
       		shininess: 50
       	});
       	plane = new THREE.Mesh(planeGeo, planeMaterial);
-      	plane.rotation.x = Math.PI / -2;
+      	plane.rotation.x = -Math.PI / 2;
       	plane.position.y = 1 / 2;
       	plane.receiveShadow = true;
       	scene.add(plane);// シーンに追加
-      
-      	/*
-      	 * キューブの作成
-      	*/
-      	var cubeGeo,cubeMaterial;
-      	cubeGeo = new THREE.BoxGeometry(1, 1, 1, 10, 10);
-      	cubeMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
-      	cube = new THREE.Mesh(cubeGeo, cubeMaterial);
-      	cube.castShadow = true;
-      	cube.receiveShadow = true;
-      	cube.position.y = 1;
-      	scene.add(cube);
       
       	/*
       	 * レンダラーの設定
@@ -187,13 +185,27 @@
       	renderer.render(scene, camera);
       }
       
+      function createCube(){
+      	/*
+      	 * キューブの作成
+      	*/
+      	var cubeGeo,cubeMaterial;
+      	cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, 1, 10, 10);
+      	cubeMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
+      	cube = new THREE.Mesh(cubeGeo, cubeMaterial);
+      	cube.castShadow = true;
+      	cube.receiveShadow = true;
+      	scene.add(cube);
+      	return cube;
+      }
+      
       function animate() {
       	requestAnimationFrame(animate);
-      	// 物理エンジンの時間を進める
-      	world.step(1 / 60);
-      	cube.position.copy(cubePhy.position);
-      	cube.quaternion.copy(cubePhy.quaternion);
-      	// レンダリング	
+      	world.step(1 / 60);// 物理エンジンの時間を進める
+      	for(var i = 0;i < cubeArr.length;i++){
+      		cubeArr[i].cube.position.copy(cubeArr[i].phy.position);
+      		cubeArr[i].cube.quaternion.copy(cubeArr[i].phy.quaternion);
+      	}
       	renderer.render(scene, camera);
       }
       
