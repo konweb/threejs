@@ -90,7 +90,7 @@ gulp.task('bs', function() {
 	browserSync({
 		open: false,
 		server: {
-			baseDir: root,
+			baseDir: distDemos,
 		},
 		watchOptions: {
 			debounceDelay: 1000
